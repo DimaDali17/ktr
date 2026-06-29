@@ -491,7 +491,7 @@ async function loadDashboard(){
 
   try{
     // flag=1 → фильтр по дате продажи (не обновления)
-    const path=`/api/v1/sales?dateFrom=${df}T00:00:00&flag=1`;
+    const path=`/api/v1/supplier/sales?dateFrom=${df}T00:00:00&flag=1`;
     const data=await proxyGet(path);
 
     if(!Array.isArray(data)){
