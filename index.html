@@ -159,7 +159,7 @@
 
 <div class="loading-overlay" id="loading-overlay">
   <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Загружаем продажи...</div>
+  <div class="loading-text" id="loading-text">Загружаем заказы...</div>
   <div class="loading-sub" id="loading-sub">Это может занять до минуты</div>
 </div>
 
@@ -183,17 +183,17 @@
       <div class="kpi-card">
         <div class="kpi-label">Доля локальных</div>
         <div class="kpi-value" id="kpi-local-pct">—</div>
-        <div class="kpi-sub">от всех продаж</div>
+        <div class="kpi-sub">от всех заказов</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Артикулов</div>
         <div class="kpi-value" id="kpi-articles">—</div>
-        <div class="kpi-sub">с продажами за период</div>
+        <div class="kpi-sub">с заказами за период</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Продаж</div>
+        <div class="kpi-label">Заказов</div>
         <div class="kpi-value" id="kpi-sales">—</div>
-        <div class="kpi-sub">за период</div>
+        <div class="kpi-sub">некансельных за период</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">ФО охвачено</div>
@@ -215,7 +215,7 @@
         <div class="panel-card">
           <div class="panel-head"><div>
             <div class="panel-title">КТР по артикулам</div>
-            <div class="panel-sub">Топ-20 по объёму продаж</div>
+            <div class="panel-sub">Топ-20 по объёму заказов</div>
           </div></div>
           <div class="chart-wrap" style="height:380px"><canvas id="chart-art-ktr"></canvas></div>
         </div>
@@ -233,7 +233,7 @@
           <input class="search-input" type="text" id="search-article" placeholder="nmId или артикул..." oninput="filterArt()">
           <label>Сортировка:</label>
           <select class="filter-select" id="sort-article" onchange="filterArt()">
-            <option value="sales-desc">Продаж ↓</option>
+            <option value="sales-desc">Заказов ↓</option>
             <option value="ktr-desc">КТР ↓</option>
             <option value="ktr-asc">КТР ↑</option>
             <option value="local-desc">Локализация ↓</option>
@@ -249,7 +249,7 @@
         </div>
         <table class="data-table">
           <thead><tr>
-            <th>Артикул (nmId)</th><th>Продаж</th><th>Локальных</th>
+            <th>Артикул (nmId)</th><th>Заказов</th><th>Локальных</th>
             <th>Доля локализации</th><th>КТР</th><th>Влияние</th>
           </tr></thead>
           <tbody id="tbody-articles"></tbody>
@@ -263,7 +263,7 @@
       <div class="two-col">
         <div class="panel-card">
           <div class="panel-head"><div>
-            <div class="panel-title">Продажи по регионам</div>
+            <div class="panel-title">Заказови по регионам</div>
             <div class="panel-sub">Топ-15 по объёму</div>
           </div></div>
           <div class="chart-wrap" style="height:380px"><canvas id="chart-reg-bar"></canvas></div>
@@ -283,7 +283,7 @@
         </div>
         <table class="data-table">
           <thead><tr>
-            <th>Регион</th><th>ФО</th><th>Продаж</th>
+            <th>Регион</th><th>ФО</th><th>Заказов</th>
             <th>Локальных</th><th>Доля локализации</th><th>Доля от всех</th>
           </tr></thead>
           <tbody id="tbody-regions"></tbody>
@@ -308,7 +308,7 @@
       </div>
       <div class="two-col">
         <div class="panel-card">
-          <div class="panel-head"><div><div class="panel-title">Продажи по неделям</div></div></div>
+          <div class="panel-head"><div><div class="panel-title">Заказови по неделям</div></div></div>
           <div class="chart-wrap" style="height:220px"><canvas id="chart-wk-sales"></canvas></div>
         </div>
         <div class="panel-card">
@@ -319,7 +319,7 @@
       <div class="panel-card">
         <table class="data-table">
           <thead><tr>
-            <th>Неделя</th><th>Продаж</th><th>Локальных</th>
+            <th>Неделя</th><th>Заказов</th><th>Локальных</th>
             <th>Доля локализации</th><th>КТР (ИЛ)</th><th>Δ КТР</th>
           </tr></thead>
           <tbody id="tbody-weeks"></tbody>
@@ -486,12 +486,12 @@ async function loadDashboard(){
 
   S={...S,token,proxy,dateFrom:df,dateTo:dt};
   localStorage.setItem('ef_v3',JSON.stringify({token,proxy}));
-  setLoad(true,'Загружаем продажи...','Данные за период из /api/v1/sales');
+  setLoad(true,'Загружаем заказы...','Заказы из /api/v1/supplier/orders');
   document.getElementById('load-btn').disabled=true;
 
   try{
     // flag=1 → фильтр по дате продажи (не обновления)
-    const path=`/api/v1/supplier/sales?dateFrom=${df}T00:00:00&flag=1`;
+    const path=`/api/v1/supplier/orders?dateFrom=${df}T00:00:00&flag=1`;
     const data=await proxyGet(path);
 
     if(!Array.isArray(data)){
@@ -499,21 +499,21 @@ async function loadDashboard(){
       setLoad(false); document.getElementById('load-btn').disabled=false; return;
     }
 
-    // Фильтруем по dateTo на клиенте
+    // Фильтруем по dateTo на клиенте, исключаем отменённые заказы
     const toDate=new Date(dt+'T23:59:59');
-    const sales=data.filter(s=>{
+    const orders=data.filter(s=>{
       const d=new Date(s.date||s.lastChangeDate||'');
-      return !isNaN(d)&&d<=toDate;
+      return !isNaN(d)&&d<=toDate&&!s.isCancel;
     });
 
-    if(!sales.length){
-      showErr(`Нет продаж за период ${df} — ${dt}. Проверьте токен и период.`);
+    if(!orders.length){
+      showErr(`Нет заказов за период ${df} — ${dt}. Проверьте токен (нужен от EF/EZFR) и период.`);
       setLoad(false); document.getElementById('load-btn').disabled=false; return;
     }
 
-    setLoad(true,'Обрабатываем данные...',`Получено ${fmtN(sales.length)} продаж`);
-    S.sales=sales;
-    processSales();
+    setLoad(true,'Обрабатываем данные...',`Получено ${fmtN(orders.length)} заказов`);
+    S.sales=orders;
+    processOrders();
     setLoad(false);
     showDash();
   }catch(e){
@@ -526,7 +526,7 @@ async function loadDashboard(){
 // ══════════════════════════════════════
 // PROCESS
 // ══════════════════════════════════════
-function processSales(){
+function processOrders(){
   const artMap={}, regMap={}, wkMap={};
 
   for(const s of S.sales){
