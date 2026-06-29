@@ -9,384 +9,116 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Unbounded:wght@400;600&display=swap');
 
   :root {
-    --bg:       #e8e4dc;
-    --card:     #f5f2ec;
-    --card2:    #faf9f6;
-    --border:   #ddd8ce;
-    --text:     #1a1a18;
-    --muted:    #8a8578;
-    --accent:   #2d2d2a;
-    --green:    #4a7c5e;
-    --green-bg: #edf4ef;
-    --red:      #9b3a2a;
-    --red-bg:   #fdecea;
-    --yellow:   #8a6a1a;
-    --yellow-bg:#fdf4dc;
-    --radius:   14px;
-    --shadow:   0 2px 20px rgba(0,0,0,0.07);
+    --bg:#e8e4dc; --card:#f5f2ec; --card2:#faf9f6; --border:#ddd8ce;
+    --text:#1a1a18; --muted:#8a8578; --accent:#2d2d2a;
+    --green:#4a7c5e; --green-bg:#edf4ef;
+    --red:#9b3a2a;   --red-bg:#fdecea;
+    --yellow:#8a6a1a;--yellow-bg:#fdf4dc;
+    --radius:14px; --shadow:0 2px 20px rgba(0,0,0,0.07);
   }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* LOGIN */
+  #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{background:var(--card);border-radius:20px;padding:36px 32px 32px;width:100%;max-width:480px;box-shadow:var(--shadow)}
+  .login-brand{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+  .login-logo{width:52px;height:52px;background:#1a1a18;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:16px;color:#f5f2ec;letter-spacing:-1px;font-weight:600;flex-shrink:0}
+  .login-brand-text h1{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:600;letter-spacing:-0.5px}
+  .login-brand-text p{font-size:10px;font-weight:500;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+  .status-pill{display:flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid #c0dbc9;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--green);margin-bottom:24px}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+  .field-group{margin-bottom:16px}
+  .field-label{display:block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+  .field-input{width:100%;padding:11px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;font-family:'Inter',monospace;font-size:13px;color:var(--text);outline:none;transition:border-color .15s}
+  .field-input:focus{border-color:var(--accent)}
+  .field-input::placeholder{color:var(--muted);opacity:.5}
+  .field-hint{font-size:11px;color:var(--muted);margin-top:6px}
+  .field-hint a{color:var(--green);text-decoration:none}
+  .field-hint a:hover{text-decoration:underline}
+  .date-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .btn-primary{width:100%;padding:14px;background:var(--accent);color:var(--card);border:none;border-radius:10px;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;letter-spacing:.02em;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:8px}
+  .btn-primary:hover{opacity:.88}.btn-primary:active{transform:scale(.99)}.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+  .login-error{background:var(--red-bg);border:1px solid #f5c6c1;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:12px;display:none}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+  /* DASHBOARD */
+  #dashboard-screen{display:none}
+  .dash-header{background:var(--card);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:10}
+  .dash-brand{display:flex;align-items:center;gap:10px;font-family:'Unbounded',sans-serif;font-size:15px;font-weight:600;letter-spacing:-0.3px}
+  .dash-logo{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--card);font-weight:600}
+  .dash-meta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted)}
+  .btn-secondary{padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text);transition:background .15s}
+  .btn-secondary:hover{background:var(--border)}
+  .dash-body{padding:28px;max-width:1280px;margin:0 auto}
 
-  /* ── LOGIN ── */
-  #login-screen {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
+  /* KPI */
+  .kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+  .kpi-card{background:var(--card);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border)}
+  .kpi-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .kpi-value{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:600;letter-spacing:-1px;color:var(--text)}
+  .kpi-sub{font-size:11px;color:var(--muted);margin-top:3px}
 
-  .login-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 36px 32px 32px;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: var(--shadow);
-  }
+  /* TABS */
+  .tab-bar{display:flex;gap:4px;margin-bottom:20px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
+  .tab-btn{padding:8px 18px;border:none;background:transparent;border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s}
+  .tab-btn.active{background:var(--accent);color:var(--card)}
+  .tab-panel{display:none}.tab-panel.active{display:block}
 
-  .login-brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
-  }
+  /* CARDS */
+  .panel-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border)}
+  .panel-title{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;letter-spacing:-0.2px}
+  .panel-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .chart-wrap{padding:20px 22px;position:relative}
 
-  .login-logo {
-    width: 52px; height: 52px;
-    background: #1a1a18;
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Unbounded', sans-serif;
-    font-size: 16px; color: #f5f2ec;
-    letter-spacing: -1px; font-weight: 600; flex-shrink: 0;
-  }
+  /* TABLE */
+  .data-table{width:100%;border-collapse:collapse}
+  .data-table th{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--card2)}
+  .data-table td{padding:11px 16px;border-bottom:1px solid #eeebe4;font-size:13px}
+  .data-table tr:last-child td{border-bottom:none}
+  .data-table tr:hover td{background:var(--card2)}
+  .bar-wrap{display:flex;align-items:center;gap:10px}
+  .bar-bg{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+  .bar-val{font-weight:600;min-width:42px;text-align:right;font-size:13px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600}
+  .badge-green{background:var(--green-bg);color:var(--green)}
+  .badge-red{background:var(--red-bg);color:var(--red)}
+  .badge-yellow{background:var(--yellow-bg);color:var(--yellow)}
+  .badge-neutral{background:var(--border);color:var(--muted)}
 
-  .login-brand-text h1 {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 20px; font-weight: 600; letter-spacing: -0.5px;
-  }
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:900px){.two-col{grid-template-columns:1fr}}
 
-  .login-brand-text p {
-    font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
-    color: var(--muted); text-transform: uppercase; margin-top: 2px;
-  }
+  .filter-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 22px;border-bottom:1px solid var(--border);background:var(--card2)}
+  .filter-bar label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .filter-select{padding:6px 10px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);outline:none;cursor:pointer}
+  .search-input{padding:6px 12px;background:var(--card);border:1px solid var(--border);border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);outline:none;width:200px}
+  .search-input:focus{border-color:var(--accent)}
 
-  .status-pill {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--green-bg);
-    border: 1px solid #c0dbc9;
-    border-radius: 8px; padding: 10px 14px;
-    font-size: 12px; color: var(--green); margin-bottom: 24px;
-  }
+  /* KTR REF */
+  .ktr-ref-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:20px 22px}
+  .ktr-ref-cell{border-radius:8px;padding:10px 12px;text-align:center}
+  .ktr-range{color:var(--muted);font-size:10px;margin-bottom:3px}
+  .ktr-num{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:600}
 
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--green); flex-shrink: 0;
-  }
+  /* LOADING */
+  .loading-overlay{position:fixed;inset:0;background:rgba(232,228,220,.9);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:100}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:600;letter-spacing:.05em;color:var(--muted)}
+  .loading-sub{font-size:11px;color:var(--muted);text-align:center;max-width:280px}
 
-  .field-group { margin-bottom: 16px; }
-
-  .field-label {
-    display: block; font-size: 10px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 7px;
-  }
-
-  .field-input {
-    width: 100%; padding: 11px 14px;
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-family: 'Inter', monospace; font-size: 13px;
-    color: var(--text); outline: none; transition: border-color 0.15s;
-  }
-  .field-input:focus { border-color: var(--accent); }
-  .field-input::placeholder { color: var(--muted); opacity: 0.5; }
-
-  .field-hint { font-size: 11px; color: var(--muted); margin-top: 6px; }
-  .field-hint a { color: var(--green); text-decoration: none; }
-  .field-hint a:hover { text-decoration: underline; }
-
-  .date-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 12px; margin-bottom: 16px;
-  }
-
-  .btn-primary {
-    width: 100%; padding: 14px;
-    background: var(--accent); color: var(--card);
-    border: none; border-radius: 10px;
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
-    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
-    margin-top: 8px;
-  }
-  .btn-primary:hover { opacity: 0.88; }
-  .btn-primary:active { transform: scale(0.99); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .login-error {
-    background: var(--red-bg);
-    border: 1px solid #f5c6c1;
-    border-radius: 8px; padding: 10px 14px;
-    font-size: 12px; color: var(--red);
-    margin-bottom: 12px; display: none;
-  }
-
-  /* ── DASHBOARD ── */
-  #dashboard-screen { display: none; }
-
-  .dash-header {
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    padding: 0 28px;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 60px; position: sticky; top: 0; z-index: 10;
-  }
-
-  .dash-brand {
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'Unbounded', sans-serif;
-    font-size: 15px; font-weight: 600; letter-spacing: -0.3px;
-  }
-
-  .dash-logo {
-    width: 32px; height: 32px;
-    background: var(--accent); border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; color: var(--card); font-weight: 600;
-  }
-
-  .dash-meta {
-    display: flex; align-items: center; gap: 16px;
-    font-size: 12px; color: var(--muted);
-  }
-
-  .btn-secondary {
-    padding: 7px 14px; background: transparent;
-    border: 1px solid var(--border); border-radius: 8px;
-    font-size: 12px; font-family: 'Inter', sans-serif;
-    cursor: pointer; color: var(--text); transition: background 0.15s;
-  }
-  .btn-secondary:hover { background: var(--border); }
-
-  .dash-body {
-    padding: 28px; max-width: 1280px; margin: 0 auto;
-  }
-
-  /* KPI strip */
-  .kpi-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px; margin-bottom: 24px;
-  }
-
-  .kpi-card {
-    background: var(--card); border-radius: var(--radius);
-    padding: 18px 20px; border: 1px solid var(--border);
-  }
-
-  .kpi-label {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
-  }
-
-  .kpi-value {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 24px; font-weight: 600;
-    letter-spacing: -1px; color: var(--text);
-  }
-
-  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
-
-  /* Tabs */
-  .tab-bar {
-    display: flex; gap: 4px; margin-bottom: 20px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 4px; width: fit-content;
-  }
-
-  .tab-btn {
-    padding: 8px 18px; border: none; background: transparent;
-    border-radius: 7px; font-family: 'Inter', sans-serif;
-    font-size: 13px; font-weight: 500; cursor: pointer;
-    color: var(--muted); transition: all 0.15s;
-  }
-  .tab-btn.active { background: var(--accent); color: var(--card); }
-
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-
-  /* Cards */
-  .panel-card {
-    background: var(--card); border-radius: var(--radius);
-    border: 1px solid var(--border); overflow: hidden;
-    margin-bottom: 16px;
-  }
-
-  .panel-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
-  }
-
-  .panel-title {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 13px; font-weight: 600; letter-spacing: -0.2px;
-  }
-
-  .panel-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .chart-wrap { padding: 20px 22px; position: relative; }
-
-  /* Tables */
-  .data-table { width: 100%; border-collapse: collapse; }
-
-  .data-table th {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--muted);
-    padding: 10px 16px; text-align: left;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap; background: var(--card2);
-    cursor: pointer; user-select: none;
-  }
-  .data-table th:hover { color: var(--text); }
-
-  .data-table td {
-    padding: 11px 16px;
-    border-bottom: 1px solid #eeebe4;
-    font-size: 13px;
-  }
-  .data-table tr:last-child td { border-bottom: none; }
-  .data-table tr:hover td { background: var(--card2); }
-
-  .bar-wrap { display: flex; align-items: center; gap: 10px; }
-  .bar-bg { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-  .bar-val { font-weight: 600; min-width: 42px; text-align: right; font-size: 13px; }
-
-  .badge {
-    display: inline-block; padding: 2px 8px;
-    border-radius: 5px; font-size: 11px; font-weight: 600;
-  }
-  .badge-green  { background: var(--green-bg);  color: var(--green);  }
-  .badge-red    { background: var(--red-bg);    color: var(--red);    }
-  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
-  .badge-neutral{ background: var(--border);    color: var(--muted);  }
-
-  /* Two-col */
-  .two-col {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 16px; margin-bottom: 16px;
-  }
-  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
-
-  /* Filter bar */
-  .filter-bar {
-    display: flex; gap: 10px; align-items: center;
-    flex-wrap: wrap; padding: 14px 22px;
-    border-bottom: 1px solid var(--border);
-    background: var(--card2);
-  }
-  .filter-bar label {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .filter-select {
-    padding: 6px 10px; background: var(--card);
-    border: 1px solid var(--border); border-radius: 7px;
-    font-family: 'Inter', sans-serif; font-size: 12px;
-    color: var(--text); outline: none; cursor: pointer;
-  }
-  .search-input {
-    padding: 6px 12px; background: var(--card);
-    border: 1px solid var(--border); border-radius: 7px;
-    font-family: 'Inter', sans-serif; font-size: 12px;
-    color: var(--text); outline: none; width: 200px;
-  }
-  .search-input:focus { border-color: var(--accent); }
-
-  /* KTR table (tariff reference) */
-  .ktr-ref-grid {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 8px; padding: 20px 22px;
-  }
-  .ktr-ref-cell {
-    border-radius: 8px; padding: 10px 12px; text-align: center;
-    font-size: 12px;
-  }
-  .ktr-ref-cell .ktr-range { color: var(--muted); font-size: 10px; margin-bottom: 3px; }
-  .ktr-ref-cell .ktr-num {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 16px; font-weight: 600;
-  }
-
-  /* Loading */
-  .loading-overlay {
-    position: fixed; inset: 0;
-    background: rgba(232,228,220,0.9);
-    display: none; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 16px; z-index: 100;
-  }
-  .spinner {
-    width: 40px; height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text {
-    font-family: 'Unbounded', sans-serif;
-    font-size: 12px; font-weight: 600;
-    letter-spacing: 0.05em; color: var(--muted);
-  }
-  .loading-sub {
-    font-size: 11px; color: var(--muted);
-    text-align: center; max-width: 280px;
-  }
-
-  .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
-  .empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
-
-  /* Pagination */
-  .pagination {
-    display: flex; align-items: center; justify-content: flex-end;
-    gap: 8px; padding: 14px 16px;
-    border-top: 1px solid var(--border);
-    font-size: 12px; color: var(--muted);
-  }
-  .pg-btn {
-    padding: 5px 10px; border: 1px solid var(--border);
-    border-radius: 6px; background: var(--card);
-    cursor: pointer; font-size: 12px; transition: background 0.1s;
-  }
-  .pg-btn:hover:not(:disabled) { background: var(--border); }
-  .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-  /* Info note */
-  .info-note {
-    background: var(--yellow-bg); border: 1px solid #e8d49a;
-    border-radius: 8px; padding: 10px 14px;
-    font-size: 12px; color: var(--yellow);
-    margin-bottom: 16px;
-  }
+  .empty-state{text-align:center;padding:48px 24px;color:var(--muted)}
+  .empty-icon{font-size:32px;margin-bottom:10px;opacity:.4}
+  .pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:14px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .pg-btn{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card);cursor:pointer;font-size:12px;transition:background .1s}
+  .pg-btn:hover:not(:disabled){background:var(--border)}.pg-btn:disabled{opacity:.3;cursor:not-allowed}
+  .info-note{background:var(--yellow-bg);border:1px solid #e8d49a;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--yellow);margin-bottom:16px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-brand">
@@ -396,98 +128,80 @@
         <p>Wildberries · КТР Аналитика</p>
       </div>
     </div>
-
     <div class="status-pill">
       <span class="status-dot"></span>
       Данные через Cloudflare Worker прокси
     </div>
-
     <div id="login-error" class="login-error"></div>
-
     <div class="field-group">
-      <label class="field-label" for="api-token">API Токен WB (категория «Статистика»)</label>
-      <input class="field-input" type="password" id="api-token"
-        placeholder="eyJhbGci..." autocomplete="off">
-      <p class="field-hint">Токен с доступом к разделу «Статистика» в настройках API</p>
+      <label class="field-label">API Токен WB (категория «Статистика»)</label>
+      <input class="field-input" type="password" id="api-token" placeholder="eyJhbGci..." autocomplete="off">
+      <p class="field-hint">Настройки → Доступ к API → категория «Статистика»</p>
     </div>
-
     <div class="field-group">
-      <label class="field-label" for="proxy-url">URL Прокси (Cloudflare Worker)</label>
-      <input class="field-input" type="text" id="proxy-url"
-        placeholder="https://ktr.xxx.workers.dev" autocomplete="off">
+      <label class="field-label">URL Прокси (Cloudflare Worker)</label>
+      <input class="field-input" type="text" id="proxy-url" placeholder="https://ktr.xxx.workers.dev" autocomplete="off">
       <p class="field-hint">Нет прокси? <a href="https://developers.cloudflare.com/workers/" target="_blank">Создай бесплатно на Cloudflare</a></p>
     </div>
-
     <div class="date-row">
       <div class="field-group" style="margin-bottom:0">
-        <label class="field-label" for="date-from">Период с</label>
+        <label class="field-label">Период с</label>
         <input class="field-input" type="date" id="date-from">
       </div>
       <div class="field-group" style="margin-bottom:0">
-        <label class="field-label" for="date-to">Период по</label>
+        <label class="field-label">Период по</label>
         <input class="field-input" type="date" id="date-to">
       </div>
     </div>
-
-    <button class="btn-primary" id="load-btn" onclick="loadDashboard()">
-      Загрузить дашборд
-    </button>
+    <button class="btn-primary" id="load-btn" onclick="loadDashboard()">Загрузить дашборд</button>
   </div>
 </div>
 
-<!-- LOADER -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Загружаем заказы...</div>
-  <div class="loading-sub" id="loading-sub">Это может занять до минуты при большом объёме заказов</div>
+  <div class="loading-text" id="loading-text">Загружаем продажи...</div>
+  <div class="loading-sub" id="loading-sub">Это может занять до минуты</div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard-screen">
   <header class="dash-header">
-    <div class="dash-brand">
-      <div class="dash-logo">EF</div>
-      КТР · Wildberries
-    </div>
+    <div class="dash-brand"><div class="dash-logo">EF</div>КТР · Wildberries</div>
     <div class="dash-meta">
       <span id="header-period">—</span>
-      <span id="header-orders-count" style="font-weight:600; color:var(--text)"></span>
+      <span id="header-count" style="font-weight:600;color:var(--text)"></span>
       <button class="btn-secondary" onclick="resetToLogin()">← Назад</button>
     </div>
   </header>
 
   <div class="dash-body">
-
-    <!-- KPI -->
     <div class="kpi-strip">
       <div class="kpi-card">
-        <div class="kpi-label">Ср. КТР (ИЛ)</div>
+        <div class="kpi-label">Индекс локализации (ИЛ)</div>
         <div class="kpi-value" id="kpi-il">—</div>
-        <div class="kpi-sub">индекс локализации</div>
+        <div class="kpi-sub">средневзвешенный КТР</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Локальных заказов</div>
+        <div class="kpi-label">Доля локальных</div>
         <div class="kpi-value" id="kpi-local-pct">—</div>
-        <div class="kpi-sub">от всех заказов</div>
+        <div class="kpi-sub">от всех продаж</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Артикулов</div>
         <div class="kpi-value" id="kpi-articles">—</div>
-        <div class="kpi-sub">с заказами за период</div>
+        <div class="kpi-sub">с продажами за период</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Всего заказов</div>
-        <div class="kpi-value" id="kpi-orders">—</div>
+        <div class="kpi-label">Продаж</div>
+        <div class="kpi-value" id="kpi-sales">—</div>
         <div class="kpi-sub">за период</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Регионов</div>
-        <div class="kpi-value" id="kpi-regions">—</div>
+        <div class="kpi-label">ФО охвачено</div>
+        <div class="kpi-value" id="kpi-fo">—</div>
         <div class="kpi-sub">федеральных округов</div>
       </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="switchTab('articles',this)">По артикулам</button>
       <button class="tab-btn" onclick="switchTab('regions',this)">По регионам</button>
@@ -495,48 +209,38 @@
       <button class="tab-btn" onclick="switchTab('ref',this)">Таблица КТР</button>
     </div>
 
-    <!-- ── TAB: ARTICLES ── -->
+    <!-- ARTICLES -->
     <div class="tab-panel active" id="tab-articles">
       <div class="two-col">
         <div class="panel-card">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title">КТР по артикулам</div>
-              <div class="panel-sub">Топ-20 по кол-ву заказов</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:380px">
-            <canvas id="chart-articles-ktr"></canvas>
-          </div>
+          <div class="panel-head"><div>
+            <div class="panel-title">КТР по артикулам</div>
+            <div class="panel-sub">Топ-20 по объёму продаж</div>
+          </div></div>
+          <div class="chart-wrap" style="height:380px"><canvas id="chart-art-ktr"></canvas></div>
         </div>
         <div class="panel-card">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title">Доля локализации</div>
-              <div class="panel-sub">% локальных заказов — топ-20</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:380px">
-            <canvas id="chart-articles-local"></canvas>
-          </div>
+          <div class="panel-head"><div>
+            <div class="panel-title">Доля локализации</div>
+            <div class="panel-sub">% локальных продаж — топ-20</div>
+          </div></div>
+          <div class="chart-wrap" style="height:380px"><canvas id="chart-art-local"></canvas></div>
         </div>
       </div>
-
       <div class="panel-card">
         <div class="filter-bar">
           <label>Поиск:</label>
-          <input class="search-input" type="text" id="search-article"
-            placeholder="Артикул или название..." oninput="filterArticleTable()">
+          <input class="search-input" type="text" id="search-article" placeholder="nmId или артикул..." oninput="filterArt()">
           <label>Сортировка:</label>
-          <select class="filter-select" id="sort-article" onchange="filterArticleTable()">
-            <option value="orders-desc">Заказов ↓</option>
+          <select class="filter-select" id="sort-article" onchange="filterArt()">
+            <option value="sales-desc">Продаж ↓</option>
             <option value="ktr-desc">КТР ↓</option>
             <option value="ktr-asc">КТР ↑</option>
             <option value="local-desc">Локализация ↓</option>
             <option value="local-asc">Локализация ↑</option>
           </select>
           <label>КТР:</label>
-          <select class="filter-select" id="filter-ktr" onchange="filterArticleTable()">
+          <select class="filter-select" id="filter-ktr" onchange="filterArt()">
             <option value="all">Все</option>
             <option value="low">Скидка (&lt;1.0)</option>
             <option value="norm">Норма (1.0)</option>
@@ -544,72 +248,51 @@
           </select>
         </div>
         <table class="data-table">
-          <thead>
-            <tr>
-              <th>Артикул (nmId)</th>
-              <th>Заказов</th>
-              <th>Локальных</th>
-              <th>Доля локализации</th>
-              <th>КТР</th>
-              <th>Влияние</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>Артикул (nmId)</th><th>Продаж</th><th>Локальных</th>
+            <th>Доля локализации</th><th>КТР</th><th>Влияние</th>
+          </tr></thead>
           <tbody id="tbody-articles"></tbody>
         </table>
-        <div class="pagination" id="pagination-articles"></div>
+        <div class="pagination" id="pag-articles"></div>
       </div>
     </div>
 
-    <!-- ── TAB: REGIONS ── -->
+    <!-- REGIONS -->
     <div class="tab-panel" id="tab-regions">
       <div class="two-col">
         <div class="panel-card">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title">Заказы по регионам</div>
-              <div class="panel-sub">Топ-15 по объёму</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:380px">
-            <canvas id="chart-regions-bar"></canvas>
-          </div>
+          <div class="panel-head"><div>
+            <div class="panel-title">Продажи по регионам</div>
+            <div class="panel-sub">Топ-15 по объёму</div>
+          </div></div>
+          <div class="chart-wrap" style="height:380px"><canvas id="chart-reg-bar"></canvas></div>
         </div>
         <div class="panel-card">
-          <div class="panel-head">
-            <div>
-              <div class="panel-title">Локальные vs. нелокальные</div>
-              <div class="panel-sub">По топ-10 регионам</div>
-            </div>
-          </div>
-          <div class="chart-wrap" style="height:380px">
-            <canvas id="chart-regions-stack"></canvas>
-          </div>
+          <div class="panel-head"><div>
+            <div class="panel-title">Локальные vs нелокальные</div>
+            <div class="panel-sub">По топ-10 регионам</div>
+          </div></div>
+          <div class="chart-wrap" style="height:380px"><canvas id="chart-reg-stack"></canvas></div>
         </div>
       </div>
       <div class="panel-card">
         <div class="filter-bar">
           <label>Поиск:</label>
-          <input class="search-input" type="text" id="search-region"
-            placeholder="Регион..." oninput="filterRegionTable()">
+          <input class="search-input" type="text" id="search-region" placeholder="Регион или ФО..." oninput="filterReg()">
         </div>
         <table class="data-table">
-          <thead>
-            <tr>
-              <th>Регион</th>
-              <th>ФО</th>
-              <th>Заказов</th>
-              <th>Локальных</th>
-              <th>Доля локализации</th>
-              <th>Доля от всех</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>Регион</th><th>ФО</th><th>Продаж</th>
+            <th>Локальных</th><th>Доля локализации</th><th>Доля от всех</th>
+          </tr></thead>
           <tbody id="tbody-regions"></tbody>
         </table>
-        <div class="pagination" id="pagination-regions"></div>
+        <div class="pagination" id="pag-regions"></div>
       </div>
     </div>
 
-    <!-- ── TAB: WEEKS ── -->
+    <!-- WEEKS -->
     <div class="tab-panel" id="tab-weeks">
       <div class="panel-card">
         <div class="panel-head">
@@ -621,938 +304,596 @@
             <option value="all">Все артикулы</option>
           </select>
         </div>
-        <div class="chart-wrap" style="height:300px">
-          <canvas id="chart-weeks-ktr"></canvas>
-        </div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart-wk-ktr"></canvas></div>
       </div>
       <div class="two-col">
         <div class="panel-card">
-          <div class="panel-head"><div>
-            <div class="panel-title">Заказы по неделям</div>
-          </div></div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="chart-weeks-orders"></canvas>
-          </div>
+          <div class="panel-head"><div><div class="panel-title">Продажи по неделям</div></div></div>
+          <div class="chart-wrap" style="height:220px"><canvas id="chart-wk-sales"></canvas></div>
         </div>
         <div class="panel-card">
-          <div class="panel-head"><div>
-            <div class="panel-title">Доля локализации по неделям</div>
-          </div></div>
-          <div class="chart-wrap" style="height:220px">
-            <canvas id="chart-weeks-local"></canvas>
-          </div>
+          <div class="panel-head"><div><div class="panel-title">Доля локализации по неделям</div></div></div>
+          <div class="chart-wrap" style="height:220px"><canvas id="chart-wk-local"></canvas></div>
         </div>
       </div>
       <div class="panel-card">
         <table class="data-table">
-          <thead>
-            <tr>
-              <th>Неделя</th>
-              <th>Заказов</th>
-              <th>Локальных</th>
-              <th>Доля локализации</th>
-              <th>КТР (ИЛ)</th>
-              <th>Δ КТР</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>Неделя</th><th>Продаж</th><th>Локальных</th>
+            <th>Доля локализации</th><th>КТР (ИЛ)</th><th>Δ КТР</th>
+          </tr></thead>
           <tbody id="tbody-weeks"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ── TAB: REFERENCE TABLE ── -->
+    <!-- REF -->
     <div class="tab-panel" id="tab-ref">
       <div class="panel-card">
-        <div class="panel-head">
-          <div>
-            <div class="panel-title">Таблица значений КТР</div>
-            <div class="panel-sub">Официальная таблица Wildberries (актуальна с 23.03.2026)</div>
-          </div>
-        </div>
-        <div class="ktr-ref-grid" id="ktr-ref-grid"></div>
-        <div style="padding: 0 22px 20px; font-size: 11px; color: var(--muted);">
-          КТР &lt; 1 — скидка на логистику &nbsp;·&nbsp; КТР = 1 — стандартный тариф &nbsp;·&nbsp; КТР &gt; 1 — наценка на логистику
-        </div>
-      </div>
-      <div class="info-note">
-        ⚠️ С 23 марта 2026 года WB изменил значения КТР. При доле локализации от 5% до 54.99% и от 75% до 94.99% КТР снижен на 0.05–0.15 единиц. Дополнительно введён ИРП (Индекс распределения продаж), который также влияет на стоимость логистики.
-      </div>
-      <div class="panel-card">
         <div class="panel-head"><div>
-          <div class="panel-title">Формула стоимости логистики</div>
+          <div class="panel-title">Таблица значений КТР</div>
+          <div class="panel-sub">Официальная таблица Wildberries (актуальна с 23.03.2026)</div>
         </div></div>
-        <div style="padding: 20px 22px; font-size: 13px; line-height: 2;">
-          <div style="font-family: 'Unbounded', monospace; font-size: 12px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; color: var(--text);">
-            Стоимость = (Тариф × Коэффициент логистики) × <strong>ИЛ</strong> + Цена × <strong>ИРП</strong>
+        <div class="ktr-ref-grid" id="ktr-ref-grid"></div>
+        <div style="padding:0 22px 20px;font-size:11px;color:var(--muted)">
+          КТР &lt; 1 — скидка · КТР = 1 — стандарт · КТР &gt; 1 — наценка
+        </div>
+      </div>
+      <div class="info-note">⚠️ С 23 марта 2026 WB изменил значения КТР и добавил ИРП (Индекс распределения продаж). При доле локализации ≥ 60% ИРП = 0.</div>
+      <div class="panel-card">
+        <div class="panel-head"><div><div class="panel-title">Формула стоимости логистики</div></div></div>
+        <div style="padding:20px 22px">
+          <div style="font-family:'Unbounded',monospace;font-size:12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:14px">
+            Стоимость = (Тариф × Коэф. логистики) × <strong>ИЛ</strong> + Цена × <strong>ИРП</strong>
           </div>
-          <div style="color: var(--muted); font-size: 12px; line-height: 1.8;">
-            <strong>ИЛ</strong> (Индекс локализации) = среднее КТР по всем заказам за 13 недель<br>
-            <strong>КТР</strong> (Коэффициент территориального распределения) = присваивается артикулу по доле локальных заказов<br>
-            <strong>ИРП</strong> (Индекс распределения продаж) = 0 при доле локализации ≥ 60%<br>
-            <strong>Локальный заказ</strong> — товар едет со склада и к покупателю в одном ФО
+          <div style="color:var(--muted);font-size:12px;line-height:1.9">
+            <strong>ИЛ</strong> = среднее КТР по всем заказам за 13 недель<br>
+            <strong>КТР</strong> = присваивается артикулу по доле локальных заказов<br>
+            <strong>ИРП</strong> = 0 при доле локализации ≥ 60%<br>
+            <strong>Локальная продажа</strong> — склад и покупатель в одном ФО
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-//  KTR TABLE (официальная таблица WB, актуальна с 23.03.2026)
-//  [minLocal%, maxLocal%, KTR, label, color]
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════
+// KTR TABLE (с 23.03.2026)
+// ══════════════════════════════════════
 const KTR_TABLE = [
-  [0,    4.99,  2.00, 'Критично', '#fdecea', '#9b3a2a'],
-  [5,    9.99,  1.80, 'Очень высокий', '#fde8e4', '#9b3a2a'],
-  [10,  14.99,  1.60, 'Высокий', '#fde8e4', '#9b3a2a'],
-  [15,  19.99,  1.50, 'Высокий', '#fde8e4', '#9b3a2a'],
-  [20,  24.99,  1.40, 'Повышенный', '#fdf0e4', '#8a4a1a'],
-  [25,  29.99,  1.30, 'Повышенный', '#fdf0e4', '#8a4a1a'],
-  [30,  34.99,  1.20, 'Умеренный', '#fdf4dc', '#8a6a1a'],
-  [35,  39.99,  1.10, 'Умеренный', '#fdf4dc', '#8a6a1a'],
-  [40,  44.99,  1.05, 'Умеренный', '#fdf4dc', '#8a6a1a'],
-  [45,  49.99,  1.00, 'Норма',    '#f5f2ec', '#8a8578'],
-  [50,  54.99,  1.00, 'Норма',    '#f5f2ec', '#8a8578'],
-  [55,  59.99,  0.95, 'Скидка',   '#edf4ef', '#4a7c5e'],
-  [60,  64.99,  0.90, 'Скидка',   '#edf4ef', '#4a7c5e'],
-  [65,  69.99,  0.85, 'Скидка',   '#edf4ef', '#4a7c5e'],
-  [70,  74.99,  0.80, 'Скидка',   '#edf4ef', '#4a7c5e'],
-  [75,  79.99,  0.75, 'Хорошо',   '#e0f0e6', '#2d6b48'],
-  [80,  84.99,  0.70, 'Хорошо',   '#e0f0e6', '#2d6b48'],
-  [85,  89.99,  0.65, 'Отлично',  '#d4ecda', '#1a5c38'],
-  [90,  94.99,  0.60, 'Отлично',  '#d4ecda', '#1a5c38'],
-  [95, 100.00,  0.50, 'Максимум', '#c8e8d0', '#0f4d2e'],
+  [0,    4.99,  2.00,'Критично',    '#fdecea','#9b3a2a'],
+  [5,    9.99,  1.80,'Очень высокий','#fde8e4','#9b3a2a'],
+  [10,  14.99,  1.60,'Высокий',     '#fde8e4','#9b3a2a'],
+  [15,  19.99,  1.50,'Высокий',     '#fde8e4','#9b3a2a'],
+  [20,  24.99,  1.40,'Повышенный',  '#fdf0e4','#8a4a1a'],
+  [25,  29.99,  1.30,'Повышенный',  '#fdf0e4','#8a4a1a'],
+  [30,  34.99,  1.20,'Умеренный',   '#fdf4dc','#8a6a1a'],
+  [35,  39.99,  1.10,'Умеренный',   '#fdf4dc','#8a6a1a'],
+  [40,  44.99,  1.05,'Умеренный',   '#fdf4dc','#8a6a1a'],
+  [45,  54.99,  1.00,'Норма',       '#f5f2ec','#8a8578'],
+  [55,  59.99,  0.95,'Скидка',      '#edf4ef','#4a7c5e'],
+  [60,  64.99,  0.90,'Скидка',      '#edf4ef','#4a7c5e'],
+  [65,  69.99,  0.85,'Скидка',      '#edf4ef','#4a7c5e'],
+  [70,  74.99,  0.80,'Скидка',      '#edf4ef','#4a7c5e'],
+  [75,  79.99,  0.75,'Хорошо',      '#e0f0e6','#2d6b48'],
+  [80,  84.99,  0.70,'Хорошо',      '#e0f0e6','#2d6b48'],
+  [85,  89.99,  0.65,'Отлично',     '#d4ecda','#1a5c38'],
+  [90,  94.99,  0.60,'Отлично',     '#d4ecda','#1a5c38'],
+  [95, 100.00,  0.50,'Максимум',    '#c8e8d0','#0f4d2e'],
 ];
 
-function getKTR(localPct) {
-  for (const row of KTR_TABLE) {
-    if (localPct >= row[0] && localPct <= row[1]) return row[2];
-  }
-  return 2.0;
+function getKTR(pct){ for(const r of KTR_TABLE) if(pct>=r[0]&&pct<=r[1]) return r[2]; return 2.0; }
+function getKTRRow(pct){ for(const r of KTR_TABLE) if(pct>=r[0]&&pct<=r[1]) return r; return KTR_TABLE[0]; }
+
+// ══════════════════════════════════════
+// FO mapping — oblastOkrugName → key
+// WB возвращает oblastOkrugName в продажах
+// ЮФО и СКФО = один регион по правилам WB
+// ══════════════════════════════════════
+function normFO(s){
+  if(!s) return null;
+  s = s.toLowerCase();
+  if(s.includes('централь'))  return 'ЦФО';
+  if(s.includes('северо-зап')) return 'СЗФО';
+  if(s.includes('южн')||s.includes('северо-кавк')||s.includes('скфо')) return 'ЮФО';
+  if(s.includes('приволж'))   return 'ПФО';
+  if(s.includes('уральск'))   return 'УФО';
+  if(s.includes('сибирск'))   return 'СФО';
+  if(s.includes('дальневост')) return 'ДВФО';
+  return s; // fallback — вернём как есть
 }
 
-function getKTRRow(localPct) {
-  for (const row of KTR_TABLE) {
-    if (localPct >= row[0] && localPct <= row[1]) return row;
-  }
-  return KTR_TABLE[0];
-}
-
-// ═══════════════════════════════════════════════════
-//  FEDERAL DISTRICTS (for local order detection)
-// ═══════════════════════════════════════════════════
-// WB warehouses → ФО mapping (основные склады)
-const WAREHOUSE_FO = {
-  'Коледино':       'ЦФО', 'Подольск':        'ЦФО',
-  'Электросталь':   'ЦФО', 'Домодедово':      'ЦФО',
-  'Белые Столбы':   'ЦФО', 'Пушкино':         'ЦФО',
-  'Краснодар':      'ЮФО', 'Краснодар 2':     'ЮФО',
-  'Невинномысск':   'СКФО','Ставрополь':       'СКФО',
-  'Екатеринбург':   'УФО', 'Тюмень':          'УФО',
-  'Новосибирск':    'СФО', 'Красноярск':      'СФО',
-  'Хабаровск':      'ДВФО','Владивосток':     'ДВФО',
-  'Санкт-Петербург':'СЗФО','Мурманск':        'СЗФО',
-  'Казань':         'ПФО', 'Самара':          'ПФО',
-  'Нижний Новгород':'ПФО',
+// Склад → ФО (по названию склада)
+const WH_FO = {
+  'Коледино':'ЦФО','Подольск':'ЦФО','Электросталь':'ЦФО','Домодедово':'ЦФО',
+  'Белые Столбы':'ЦФО','Пушкино':'ЦФО','Щербинка':'ЦФО','Ясенево':'ЦФО',
+  'Краснодар':'ЮФО','Невинномысск':'ЮФО','Ставрополь':'ЮФО',
+  'Екатеринбург':'УФО','Тюмень':'УФО','Челябинск':'УФО',
+  'Новосибирск':'СФО','Красноярск':'СФО','Барнаул':'СФО',
+  'Хабаровск':'ДВФО','Владивосток':'ДВФО',
+  'Санкт-Петербург':'СЗФО','СПБ':'СЗФО',
+  'Казань':'ПФО','Самара':'ПФО','Нижний Новгород':'ПФО',
 };
 
-// Region → ФО (по regionName в API заказов)
-const REGION_FO = {
-  // ЦФО
-  'Москва':'ЦФО','Московская область':'ЦФО','Белгородская область':'ЦФО',
-  'Брянская область':'ЦФО','Владимирская область':'ЦФО','Воронежская область':'ЦФО',
-  'Ивановская область':'ЦФО','Калужская область':'ЦФО','Костромская область':'ЦФО',
-  'Курская область':'ЦФО','Липецкая область':'ЦФО','Орловская область':'ЦФО',
-  'Рязанская область':'ЦФО','Смоленская область':'ЦФО','Тамбовская область':'ЦФО',
-  'Тверская область':'ЦФО','Тульская область':'ЦФО','Ярославская область':'ЦФО',
-  // СЗФО
-  'Санкт-Петербург':'СЗФО','Ленинградская область':'СЗФО','Архангельская область':'СЗФО',
-  'Вологодская область':'СЗФО','Калининградская область':'СЗФО','Карелия':'СЗФО',
-  'Коми':'СЗФО','Мурманская область':'СЗФО','Ненецкий АО':'СЗФО',
-  'Новгородская область':'СЗФО','Псковская область':'СЗФО',
-  // ЮФО+СКФО (считаем как один по правилам WB)
-  'Краснодарский край':'ЮФО','Ростовская область':'ЮФО','Волгоградская область':'ЮФО',
-  'Астраханская область':'ЮФО','Адыгея':'ЮФО','Калмыкия':'ЮФО','Крым':'ЮФО',
-  'Севастополь':'ЮФО',
-  'Дагестан':'ЮФО','Ингушетия':'ЮФО','Кабардино-Балкария':'ЮФО',
-  'Карачаево-Черкесия':'ЮФО','Северная Осетия':'ЮФО','Чечня':'ЮФО',
-  'Ставропольский край':'ЮФО',
-  // ПФО
-  'Республика Башкортостан':'ПФО','Кировская область':'ПФО','Республика Марий Эл':'ПФО',
-  'Республика Мордовия':'ПФО','Нижегородская область':'ПФО','Оренбургская область':'ПФО',
-  'Пензенская область':'ПФО','Пермский край':'ПФО','Самарская область':'ПФО',
-  'Саратовская область':'ПФО','Республика Татарстан':'ПФО','Удмуртия':'ПФО',
-  'Ульяновская область':'ПФО','Чувашия':'ПФО',
-  // УФО
-  'Курганская область':'УФО','Свердловская область':'УФО','Тюменская область':'УФО',
-  'Ханты-Мансийский АО':'УФО','Челябинская область':'УФО','Ямало-Ненецкий АО':'УФО',
-  // СФО
-  'Республика Алтай':'СФО','Алтайский край':'СФО','Иркутская область':'СФО',
-  'Кемеровская область':'СФО','Красноярский край':'СФО','Новосибирская область':'СФО',
-  'Омская область':'СФО','Томская область':'СФО','Республика Тыва':'СФО',
-  'Республика Хакасия':'СФО','Забайкальский край':'СФО',
-  // ДВФО
-  'Амурская область':'ДВФО','Еврейская АО':'ДВФО','Камчатский край':'ДВФО',
-  'Магаданская область':'ДВФО','Приморский край':'ДВФО','Сахалинская область':'ДВФО',
-  'Хабаровский край':'ДВФО','Чукотский АО':'ДВФО','Якутия':'ДВФО','Бурятия':'ДВФО',
-};
-
-function getRegionFO(regionName) {
-  if (!regionName) return null;
-  // Точное совпадение
-  if (REGION_FO[regionName]) return REGION_FO[regionName];
-  // Поиск по части
-  for (const [k, v] of Object.entries(REGION_FO)) {
-    if (regionName.includes(k) || k.includes(regionName)) return v;
-  }
+function getWhFO(wh){
+  if(!wh) return null;
+  for(const [k,v] of Object.entries(WH_FO)) if(wh.includes(k)) return v;
+  // Если склад центральный (Москва и обл.) → ЦФО
+  if(/москв|московск/i.test(wh)) return 'ЦФО';
   return null;
 }
 
-function getWarehouseFO(warehouseName) {
-  if (!warehouseName) return null;
-  for (const [k, v] of Object.entries(WAREHOUSE_FO)) {
-    if (warehouseName.includes(k)) return v;
-  }
-  return null;
-}
-
-// ═══════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════
-let S = {
-  token: '', proxy: '', dateFrom: '', dateTo: '',
-  orders: [],       // raw orders from API
-  byArticle: [],    // aggregated by nmId
-  byRegion: [],     // aggregated by region
-  byWeek: [],       // aggregated by week
-  articlePage: 1, regionPage: 1,
-  articleFilter: '', regionFilter: '',
-  articleSort: 'orders-desc', ktrFilter: 'all',
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let S={
+  token:'',proxy:'',dateFrom:'',dateTo:'',
+  sales:[],
+  byArt:[], byReg:[], byWeek:[],
+  artPage:1, regPage:1,
+  artFilter:'',regFilter:'',artSort:'sales-desc',ktrFilter:'all',
 };
+const PAGE=20, CHARTS={};
 
-const PAGE = 20;
-const CHARTS = {};
-
-// ═══════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════
-(function init() {
-  const to = new Date();
-  const from = new Date(); from.setDate(from.getDate() - 90);
-  document.getElementById('date-to').value = fmtDate(to);
-  document.getElementById('date-from').value = fmtDate(from);
-
-  const saved = localStorage.getItem('ef_creds_v2');
-  if (saved) {
-    try {
-      const c = JSON.parse(saved);
-      if (c.token) document.getElementById('api-token').value = c.token;
-      if (c.proxy)  document.getElementById('proxy-url').value = c.proxy;
-    } catch(e) {}
-  }
-
-  renderKTRRefTable();
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+(function(){
+  const to=new Date(), from=new Date();
+  from.setDate(from.getDate()-90);
+  document.getElementById('date-to').value=fmtD(to);
+  document.getElementById('date-from').value=fmtD(from);
+  try{
+    const c=JSON.parse(localStorage.getItem('ef_v3')||'{}');
+    if(c.token) document.getElementById('api-token').value=c.token;
+    if(c.proxy)  document.getElementById('proxy-url').value=c.proxy;
+  }catch(e){}
+  renderKTRRef();
 })();
 
-function fmtDate(d) { return d.toISOString().slice(0, 10); }
+function fmtD(d){ return d.toISOString().slice(0,10); }
 
-// ═══════════════════════════════════════════════════
-//  API
-// ═══════════════════════════════════════════════════
-async function proxyGet(path) {
-  const proxy = S.proxy.replace(/\/$/, '');
-  const target = 'https://statistics-api.wildberries.ru' + path;
-  const url = `${proxy}?url=${encodeURIComponent(target)}`;
-  const res = await fetch(url, {
-    headers: { 'Authorization': S.token }
-  });
-  if (!res.ok) {
-    const txt = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status} от WB API: ${txt.slice(0, 300)}`);
+// ══════════════════════════════════════
+// API  — statistics-api /api/v1/sales
+// ══════════════════════════════════════
+async function proxyGet(path){
+  const base=S.proxy.replace(/\/$/,'');
+  const target='https://statistics-api.wildberries.ru'+path;
+  const url=`${base}?url=${encodeURIComponent(target)}`;
+  const res=await fetch(url,{headers:{'Authorization':S.token}});
+  if(!res.ok){
+    const t=await res.text().catch(()=>'');
+    throw new Error(`HTTP ${res.status} от WB API: ${t.slice(0,400)}`);
   }
   return res.json();
 }
 
-// ═══════════════════════════════════════════════════
-//  LOAD
-// ═══════════════════════════════════════════════════
-async function loadDashboard() {
-  const token   = document.getElementById('api-token').value.trim();
-  const proxy   = document.getElementById('proxy-url').value.trim();
-  const dateFrom = document.getElementById('date-from').value;
-  const dateTo   = document.getElementById('date-to').value;
+// ══════════════════════════════════════
+// LOAD
+// ══════════════════════════════════════
+async function loadDashboard(){
+  const token=document.getElementById('api-token').value.trim();
+  const proxy=document.getElementById('proxy-url').value.trim();
+  const df=document.getElementById('date-from').value;
+  const dt=document.getElementById('date-to').value;
+  document.getElementById('login-error').style.display='none';
+  if(!token){showErr('Введите API токен WB');return;}
+  if(!proxy){showErr('Введите URL прокси');return;}
+  if(!df||!dt){showErr('Укажите период');return;}
+  if(df>dt){showErr('Дата начала должна быть раньше даты окончания');return;}
 
-  document.getElementById('login-error').style.display = 'none';
+  S={...S,token,proxy,dateFrom:df,dateTo:dt};
+  localStorage.setItem('ef_v3',JSON.stringify({token,proxy}));
+  setLoad(true,'Загружаем продажи...','Данные за период из /api/v1/sales');
+  document.getElementById('load-btn').disabled=true;
 
-  if (!token)   { showLoginError('Введите API токен WB'); return; }
-  if (!proxy)   { showLoginError('Введите URL прокси'); return; }
-  if (!dateFrom || !dateTo) { showLoginError('Укажите период'); return; }
-  if (dateFrom > dateTo)    { showLoginError('Дата начала должна быть раньше даты окончания'); return; }
+  try{
+    // flag=1 → фильтр по дате продажи (не обновления)
+    const path=`/api/v1/sales?dateFrom=${df}T00:00:00&flag=1`;
+    const data=await proxyGet(path);
 
-  S = { ...S, token, proxy, dateFrom, dateTo };
-  localStorage.setItem('ef_creds_v2', JSON.stringify({ token, proxy }));
-
-  setLoading(true, 'Загружаем заказы...', 'Это может занять до минуты при большом объёме');
-  document.getElementById('load-btn').disabled = true;
-
-  try {
-    // WB Statistics API: GET /api/v1/orders?dateFrom=...&flag=1
-    // flag=1 = фильтр по дате заказа (не обновления)
-    // Загружаем порциями если нужно (API отдаёт до 80к строк)
-    const allOrders = await fetchAllOrders(dateFrom, dateTo);
-
-    if (!allOrders.length) {
-      showLoginError(`Нет заказов за период ${dateFrom} — ${dateTo}. Проверьте токен (нужна категория «Статистика») и период.`);
-      setLoading(false);
-      document.getElementById('load-btn').disabled = false;
-      return;
+    if(!Array.isArray(data)){
+      showErr('Неожиданный ответ API. Проверьте токен — нужна категория «Статистика».');
+      setLoad(false); document.getElementById('load-btn').disabled=false; return;
     }
 
-    setLoading(true, 'Обрабатываем данные...', `Получено ${fmtNum(allOrders.length)} заказов`);
-    S.orders = allOrders;
-    processOrders();
+    // Фильтруем по dateTo на клиенте
+    const toDate=new Date(dt+'T23:59:59');
+    const sales=data.filter(s=>{
+      const d=new Date(s.date||s.lastChangeDate||'');
+      return !isNaN(d)&&d<=toDate;
+    });
 
-    setLoading(false);
-    showDashboard();
-
-  } catch(e) {
-    setLoading(false);
-    document.getElementById('load-btn').disabled = false;
-    showLoginError('Ошибка: ' + e.message);
-  }
-}
-
-async function fetchAllOrders(dateFrom, dateTo) {
-  // Statistics API: GET /api/v1/orders?dateFrom=YYYY-MM-DD&flag=0
-  // Возвращает заказы с dateFrom. Нужно фильтровать по dateTo на клиенте.
-  const path = `/api/v1/orders?dateFrom=${dateFrom}T00:00:00&flag=1`;
-  setLoading(true, 'Загружаем заказы...', `Период: ${dateFrom} → ${dateTo}`);
-
-  let data;
-  try {
-    data = await proxyGet(path);
-  } catch(e) {
-    throw new Error(e.message);
-  }
-
-  if (!Array.isArray(data)) {
-    throw new Error('Неожиданный ответ от API. Проверьте токен — нужна категория «Статистика».');
-  }
-
-  // Фильтруем по dateTo
-  const to = new Date(dateTo + 'T23:59:59');
-  return data.filter(o => {
-    const d = new Date(o.date || o.lastChangeDate || '');
-    return d <= to;
-  });
-}
-
-// ═══════════════════════════════════════════════════
-//  PROCESS ORDERS
-// ═══════════════════════════════════════════════════
-function processOrders() {
-  const orders = S.orders;
-
-  const artMap  = {};  // nmId → {orders, local, weeks:{}}
-  const regMap  = {};  // region → {orders, local, fo}
-  const weekMap = {};  // weekKey → {orders, local}
-
-  for (const o of orders) {
-    const nmId      = o.nmId || 0;
-    const region    = o.regionName || 'Неизвестно';
-    const warehouse = o.warehouseName || '';
-    const dateStr   = (o.date || o.lastChangeDate || '').slice(0, 10);
-    const weekKey   = getWeekKey(dateStr);
-
-    // Определяем ФО региона покупателя и склада
-    const buyerFO    = getRegionFO(region);
-    const whFO       = getWarehouseFO(warehouse);
-    // Локальный заказ = склад и покупатель в одном ФО
-    // (или если ЮФО+СКФО — они считаются одним по правилам WB)
-    const isLocal = buyerFO && whFO && normFO(buyerFO) === normFO(whFO);
-
-    // By article
-    if (!artMap[nmId]) artMap[nmId] = { nmId, orders: 0, local: 0, weeks: {}, vendorCode: o.supplierArticle || '' };
-    artMap[nmId].orders++;
-    if (isLocal) artMap[nmId].local++;
-
-    // By week
-    if (!artMap[nmId].weeks[weekKey]) artMap[nmId].weeks[weekKey] = { orders: 0, local: 0 };
-    artMap[nmId].weeks[weekKey].orders++;
-    if (isLocal) artMap[nmId].weeks[weekKey].local++;
-
-    // By region
-    const regKey = region;
-    if (!regMap[regKey]) regMap[regKey] = { region, fo: buyerFO || '—', orders: 0, local: 0 };
-    regMap[regKey].orders++;
-    if (isLocal) regMap[regKey].local++;
-
-    // By week (total)
-    if (!weekMap[weekKey]) weekMap[weekKey] = { week: weekKey, orders: 0, local: 0 };
-    weekMap[weekKey].orders++;
-    if (isLocal) weekMap[weekKey].local++;
-  }
-
-  // Convert + calc KTR
-  S.byArticle = Object.values(artMap).map(a => {
-    const localPct = a.orders > 0 ? a.local / a.orders * 100 : 0;
-    return { ...a, localPct, ktr: getKTR(localPct) };
-  }).sort((a, b) => b.orders - a.orders);
-
-  S.byRegion = Object.values(regMap).map(r => {
-    const localPct = r.orders > 0 ? r.local / r.orders * 100 : 0;
-    return { ...r, localPct };
-  }).sort((a, b) => b.orders - a.orders);
-
-  S.byWeek = Object.entries(weekMap).map(([k, v]) => {
-    const localPct = v.orders > 0 ? v.local / v.orders * 100 : 0;
-    return { week: k, orders: v.orders, local: v.local, localPct, ktr: getKTR(localPct) };
-  }).sort((a, b) => a.week.localeCompare(b.week));
-}
-
-// ЮФО и СКФО — один регион для расчёта локальности
-function normFO(fo) {
-  return (fo === 'СКФО') ? 'ЮФО' : fo;
-}
-
-function getWeekKey(dateStr) {
-  if (!dateStr || dateStr.length < 10) return 'Неизвестно';
-  const d = new Date(dateStr);
-  if (isNaN(d)) return dateStr;
-  const day = d.getDay() || 7;
-  d.setDate(d.getDate() - day + 1);
-  return d.toISOString().slice(0, 10);
-}
-
-function fmtWeek(str) {
-  if (!str || str.length < 10) return str;
-  const d = new Date(str);
-  if (isNaN(d)) return str;
-  const end = new Date(d); end.setDate(end.getDate() + 6);
-  const m = d => `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
-  return `${m(d)}–${m(end)}`;
-}
-
-// ═══════════════════════════════════════════════════
-//  SHOW DASHBOARD
-// ═══════════════════════════════════════════════════
-function showDashboard() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('dashboard-screen').style.display = 'block';
-
-  renderKPIs();
-  renderArticleCharts();
-  renderArticleTable();
-  renderRegionCharts();
-  renderRegionTable();
-  populateWeekFilter();
-  renderWeekCharts();
-}
-
-// ═══════════════════════════════════════════════════
-//  KPIs
-// ═══════════════════════════════════════════════════
-function renderKPIs() {
-  const total  = S.orders.length;
-  const local  = S.byWeek.reduce((s, w) => s + w.local, 0);
-  const localPct = total > 0 ? local / total * 100 : 0;
-
-  // Средневзвешенный КТР = ИЛ
-  let sumKTR = 0, sumOrders = 0;
-  for (const a of S.byArticle) {
-    sumKTR    += a.ktr * a.orders;
-    sumOrders += a.orders;
-  }
-  const il = sumOrders > 0 ? sumKTR / sumOrders : 1;
-
-  document.getElementById('kpi-il').textContent      = il.toFixed(2);
-  document.getElementById('kpi-local-pct').textContent = localPct.toFixed(1) + '%';
-  document.getElementById('kpi-articles').textContent = fmtNum(S.byArticle.length);
-  document.getElementById('kpi-orders').textContent   = fmtNum(total);
-  document.getElementById('kpi-regions').textContent  = fmtNum(new Set(S.byRegion.map(r => r.fo).filter(f => f !== '—')).size);
-
-  const from = S.dateFrom.split('-').reverse().join('.');
-  const to   = S.dateTo.split('-').reverse().join('.');
-  document.getElementById('header-period').textContent = `${from} – ${to}`;
-  document.getElementById('header-orders-count').textContent = fmtNum(total) + ' заказов';
-
-  // Color KTR
-  const ilEl = document.getElementById('kpi-il');
-  ilEl.style.color = il < 1 ? 'var(--green)' : il > 1 ? 'var(--red)' : 'var(--text)';
-}
-
-// ═══════════════════════════════════════════════════
-//  CHART DEFAULTS
-// ═══════════════════════════════════════════════════
-const CD = {
-  plugins: {
-    legend: { display: false },
-    tooltip: {
-      backgroundColor: '#1a1a18',
-      titleFont: { family: 'Unbounded', size: 11 },
-      bodyFont:  { family: 'Inter', size: 12 },
-      padding: 10, cornerRadius: 8,
+    if(!sales.length){
+      showErr(`Нет продаж за период ${df} — ${dt}. Проверьте токен и период.`);
+      setLoad(false); document.getElementById('load-btn').disabled=false; return;
     }
+
+    setLoad(true,'Обрабатываем данные...',`Получено ${fmtN(sales.length)} продаж`);
+    S.sales=sales;
+    processSales();
+    setLoad(false);
+    showDash();
+  }catch(e){
+    setLoad(false);
+    document.getElementById('load-btn').disabled=false;
+    showErr('Ошибка: '+e.message);
+  }
+}
+
+// ══════════════════════════════════════
+// PROCESS
+// ══════════════════════════════════════
+function processSales(){
+  const artMap={}, regMap={}, wkMap={};
+
+  for(const s of S.sales){
+    const nmId=s.nmId||0;
+    const wh=s.warehouseName||'';
+    // oblastOkrugName — ФО покупателя (есть в /api/v1/sales!)
+    const buyerFO=normFO(s.oblastOkrugName||'');
+    const whFO=getWhFO(wh);
+    const isLocal=!!(buyerFO&&whFO&&buyerFO===whFO);
+
+    const dateStr=(s.date||s.lastChangeDate||'').slice(0,10);
+    const wk=getWk(dateStr);
+
+    // Article
+    if(!artMap[nmId]) artMap[nmId]={nmId,sales:0,local:0,vendorCode:s.supplierArticle||'',weeks:{}};
+    artMap[nmId].sales++;
+    if(isLocal) artMap[nmId].local++;
+    if(!artMap[nmId].weeks[wk]) artMap[nmId].weeks[wk]={sales:0,local:0};
+    artMap[nmId].weeks[wk].sales++;
+    if(isLocal) artMap[nmId].weeks[wk].local++;
+
+    // Region
+    const reg=s.regionName||s.oblastOkrugName||'Неизвестно';
+    const fo=s.oblastOkrugName||'—';
+    if(!regMap[reg]) regMap[reg]={region:reg,fo,sales:0,local:0};
+    regMap[reg].sales++;
+    if(isLocal) regMap[reg].local++;
+
+    // Week
+    if(!wkMap[wk]) wkMap[wk]={week:wk,sales:0,local:0};
+    wkMap[wk].sales++;
+    if(isLocal) wkMap[wk].local++;
+  }
+
+  S.byArt=Object.values(artMap).map(a=>{
+    const p=a.sales>0?a.local/a.sales*100:0;
+    return{...a,localPct:p,ktr:getKTR(p)};
+  }).sort((a,b)=>b.sales-a.sales);
+
+  S.byReg=Object.values(regMap).map(r=>{
+    const p=r.sales>0?r.local/r.sales*100:0;
+    return{...r,localPct:p};
+  }).sort((a,b)=>b.sales-a.sales);
+
+  S.byWeek=Object.entries(wkMap).map(([k,v])=>{
+    const p=v.sales>0?v.local/v.sales*100:0;
+    return{week:k,sales:v.sales,local:v.local,localPct:p,ktr:getKTR(p)};
+  }).sort((a,b)=>a.week.localeCompare(b.week));
+}
+
+function getWk(dateStr){
+  if(!dateStr||dateStr.length<10) return 'Неизвестно';
+  const d=new Date(dateStr); if(isNaN(d)) return dateStr;
+  const day=d.getDay()||7; d.setDate(d.getDate()-day+1);
+  return d.toISOString().slice(0,10);
+}
+function fmtWk(s){
+  if(!s||s.length<10) return s;
+  const d=new Date(s); if(isNaN(d)) return s;
+  const e=new Date(d); e.setDate(e.getDate()+6);
+  const m=d=>`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
+  return `${m(d)}–${m(e)}`;
+}
+
+// ══════════════════════════════════════
+// SHOW DASH
+// ══════════════════════════════════════
+function showDash(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('dashboard-screen').style.display='block';
+  renderKPIs(); renderArtCharts(); renderArtTable();
+  renderRegCharts(); renderRegTable();
+  populateWkFilter(); renderWeekCharts();
+}
+
+function renderKPIs(){
+  const total=S.sales.length;
+  let sumKTR=0,sumS=0;
+  for(const a of S.byArt){sumKTR+=a.ktr*a.sales;sumS+=a.sales;}
+  const il=sumS>0?sumKTR/sumS:1;
+  const localTotal=S.byArt.reduce((s,a)=>s+a.local,0);
+  const localPct=total>0?localTotal/total*100:0;
+  const foSet=new Set(S.byReg.map(r=>normFO(r.fo)).filter(Boolean));
+
+  document.getElementById('kpi-il').textContent=il.toFixed(2);
+  document.getElementById('kpi-il').style.color=il<1?'var(--green)':il>1?'var(--red)':'var(--text)';
+  document.getElementById('kpi-local-pct').textContent=localPct.toFixed(1)+'%';
+  document.getElementById('kpi-articles').textContent=fmtN(S.byArt.length);
+  document.getElementById('kpi-sales').textContent=fmtN(total);
+  document.getElementById('kpi-fo').textContent=fmtN(foSet.size);
+
+  const f=S.dateFrom.split('-').reverse().join('.');
+  const t=S.dateTo.split('-').reverse().join('.');
+  document.getElementById('header-period').textContent=`${f} – ${t}`;
+  document.getElementById('header-count').textContent=fmtN(total)+' продаж';
+}
+
+// ══════════════════════════════════════
+// CHART DEFAULTS
+// ══════════════════════════════════════
+const CD={
+  plugins:{
+    legend:{display:false},
+    tooltip:{backgroundColor:'#1a1a18',titleFont:{family:'Unbounded',size:11},bodyFont:{family:'Inter',size:12},padding:10,cornerRadius:8}
   },
-  scales: {
-    x: { grid: { color: '#eeebe4' }, ticks: { font: { family: 'Inter', size: 11 }, color: '#8a8578' } },
-    y: { grid: { color: '#eeebe4' }, ticks: { font: { family: 'Inter', size: 11 }, color: '#8a8578' } },
+  scales:{
+    x:{grid:{color:'#eeebe4'},ticks:{font:{family:'Inter',size:11},color:'#8a8578'}},
+    y:{grid:{color:'#eeebe4'},ticks:{font:{family:'Inter',size:11},color:'#8a8578'}},
   }
 };
+function dc(id){if(CHARTS[id]){CHARTS[id].destroy();delete CHARTS[id];}}
 
-function dc(id) { if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; } }
-
-// ═══════════════════════════════════════════════════
-//  ARTICLE CHARTS
-// ═══════════════════════════════════════════════════
-function renderArticleCharts() {
-  const top20 = [...S.byArticle].sort((a,b) => b.orders - a.orders).slice(0, 20);
-
-  // KTR bar
-  dc('articles-ktr');
-  CHARTS['articles-ktr'] = new Chart(document.getElementById('chart-articles-ktr'), {
-    type: 'bar',
-    data: {
-      labels: top20.map(a => a.nmId),
-      datasets: [{
-        data: top20.map(a => +a.ktr.toFixed(2)),
-        backgroundColor: top20.map(a => a.ktr < 1 ? '#4a7c5e' : a.ktr === 1 ? '#8a8578' : '#9b3a2a'),
-        borderRadius: 4, borderSkipped: false,
-      }]
+// ══════════════════════════════════════
+// ARTICLE CHARTS
+// ══════════════════════════════════════
+function renderArtCharts(){
+  const top=S.byArt.slice(0,20);
+  dc('art-ktr');
+  CHARTS['art-ktr']=new Chart(document.getElementById('chart-art-ktr'),{
+    type:'bar',
+    data:{
+      labels:top.map(a=>a.nmId),
+      datasets:[{data:top.map(a=>+a.ktr.toFixed(2)),
+        backgroundColor:top.map(a=>a.ktr<1?'#4a7c5e':a.ktr===1?'#8a8578':'#9b3a2a'),
+        borderRadius:4,borderSkipped:false}]
     },
-    options: {
-      ...CD, indexAxis: 'y',
-      plugins: { ...CD.plugins, tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => `КТР: ${ctx.raw}` } } },
-      scales: {
-        x: { ...CD.scales.x, min: 0, max: 2.1, ticks: { ...CD.scales.x.ticks } },
-        y: { ...CD.scales.y, ticks: { ...CD.scales.y.ticks, font: { size: 10 } } }
-      }
+    options:{...CD,indexAxis:'y',
+      plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>`КТР: ${ctx.raw}`}}},
+      scales:{x:{...CD.scales.x,min:0,max:2.1},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,font:{size:10}}}}
     }
   });
-
-  // Local% bar
-  dc('articles-local');
-  CHARTS['articles-local'] = new Chart(document.getElementById('chart-articles-local'), {
-    type: 'bar',
-    data: {
-      labels: top20.map(a => a.nmId),
-      datasets: [{
-        data: top20.map(a => +a.localPct.toFixed(1)),
-        backgroundColor: top20.map(a => a.localPct >= 60 ? '#4a7c5e' : a.localPct >= 40 ? '#8a6a1a' : '#9b3a2a'),
-        borderRadius: 4, borderSkipped: false,
-      }]
+  dc('art-local');
+  CHARTS['art-local']=new Chart(document.getElementById('chart-art-local'),{
+    type:'bar',
+    data:{
+      labels:top.map(a=>a.nmId),
+      datasets:[{data:top.map(a=>+a.localPct.toFixed(1)),
+        backgroundColor:top.map(a=>a.localPct>=60?'#4a7c5e':a.localPct>=40?'#8a6a1a':'#9b3a2a'),
+        borderRadius:4,borderSkipped:false}]
     },
-    options: {
-      ...CD, indexAxis: 'y',
-      plugins: { ...CD.plugins, tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => `${ctx.raw}% локальных` } } },
-      scales: {
-        x: { ...CD.scales.x, min: 0, max: 100, ticks: { ...CD.scales.x.ticks, callback: v => v + '%' } },
-        y: { ...CD.scales.y, ticks: { ...CD.scales.y.ticks, font: { size: 10 } } }
-      }
+    options:{...CD,indexAxis:'y',
+      plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>`${ctx.raw}% локальных`}}},
+      scales:{x:{...CD.scales.x,min:0,max:100,ticks:{...CD.scales.x.ticks,callback:v=>v+'%'}},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,font:{size:10}}}}
     }
   });
 }
 
-// ═══════════════════════════════════════════════════
-//  ARTICLE TABLE
-// ═══════════════════════════════════════════════════
-function renderArticleTable() {
-  let data = [...S.byArticle];
+// ══════════════════════════════════════
+// ARTICLE TABLE
+// ══════════════════════════════════════
+function renderArtTable(){
+  let d=[...S.byArt];
+  if(S.artFilter){const f=S.artFilter.toLowerCase();d=d.filter(a=>String(a.nmId).includes(f)||(a.vendorCode||'').toLowerCase().includes(f));}
+  if(S.ktrFilter==='low')  d=d.filter(a=>a.ktr<1);
+  if(S.ktrFilter==='norm') d=d.filter(a=>a.ktr===1);
+  if(S.ktrFilter==='high') d=d.filter(a=>a.ktr>1);
+  if(S.artSort==='sales-desc')  d.sort((a,b)=>b.sales-a.sales);
+  if(S.artSort==='ktr-desc')    d.sort((a,b)=>b.ktr-a.ktr);
+  if(S.artSort==='ktr-asc')     d.sort((a,b)=>a.ktr-b.ktr);
+  if(S.artSort==='local-desc')  d.sort((a,b)=>b.localPct-a.localPct);
+  if(S.artSort==='local-asc')   d.sort((a,b)=>a.localPct-b.localPct);
 
-  if (S.articleFilter) {
-    const f = S.articleFilter.toLowerCase();
-    data = data.filter(a => String(a.nmId).includes(f) || (a.vendorCode || '').toLowerCase().includes(f));
+  const total=d.length,page=S.artPage;
+  const sl=d.slice((page-1)*PAGE,page*PAGE);
+  const tb=document.getElementById('tbody-articles');
+  tb.innerHTML='';
+  if(!sl.length){tb.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📦</div>Нет данных</div></td></tr>';return;}
+  sl.forEach(a=>{
+    const row=getKTRRow(a.localPct);
+    const bc=a.localPct>=60?'#4a7c5e':a.localPct>=40?'#8a6a1a':'#9b3a2a';
+    tb.innerHTML+=`<tr>
+      <td><strong>${a.nmId}</strong>${a.vendorCode?`<div style="font-size:11px;color:var(--muted)">${a.vendorCode}</div>`:''}
+      </td>
+      <td>${fmtN(a.sales)}</td>
+      <td>${fmtN(a.local)}</td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(a.localPct)}%;background:${bc}"></div></div><span class="bar-val">${a.localPct.toFixed(1)}%</span></div></td>
+      <td><span style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;background:${row[4]};color:${row[5]};padding:3px 10px;border-radius:6px">${a.ktr.toFixed(2)}</span></td>
+      <td><span class="badge" style="background:${row[4]};color:${row[5]}">${row[3]}</span></td>
+    </tr>`;
+  });
+  renderPag('pag-articles',total,page,p=>{S.artPage=p;renderArtTable();});
+}
+function filterArt(){
+  S.artFilter=document.getElementById('search-article').value.trim();
+  S.artSort=document.getElementById('sort-article').value;
+  S.ktrFilter=document.getElementById('filter-ktr').value;
+  S.artPage=1; renderArtTable();
+}
+
+// ══════════════════════════════════════
+// REGION CHARTS
+// ══════════════════════════════════════
+function renderRegCharts(){
+  const t15=S.byReg.slice(0,15);
+  dc('reg-bar');
+  CHARTS['reg-bar']=new Chart(document.getElementById('chart-reg-bar'),{
+    type:'bar',
+    data:{labels:t15.map(r=>r.region.length>20?r.region.slice(0,18)+'…':r.region),
+      datasets:[{data:t15.map(r=>r.sales),backgroundColor:'#2d2d2a',borderRadius:4,borderSkipped:false}]},
+    options:{...CD,indexAxis:'y',
+      plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>fmtN(ctx.raw)+' продаж'}}},
+      scales:{x:{...CD.scales.x,ticks:{...CD.scales.x.ticks,callback:v=>fmtN(v)}},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,font:{size:10}}}}
+    }
+  });
+  const t10=S.byReg.slice(0,10);
+  dc('reg-stack');
+  CHARTS['reg-stack']=new Chart(document.getElementById('chart-reg-stack'),{
+    type:'bar',
+    data:{labels:t10.map(r=>r.region.length>16?r.region.slice(0,14)+'…':r.region),
+      datasets:[
+        {label:'Локальные',data:t10.map(r=>r.local),backgroundColor:'#4a7c5e',borderRadius:0},
+        {label:'Нелокальные',data:t10.map(r=>r.sales-r.local),backgroundColor:'#ddd8ce',borderRadius:0}
+      ]},
+    options:{...CD,indexAxis:'y',
+      plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},color:'#8a8578',boxWidth:12}},
+        tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.raw)}`}}},
+      scales:{x:{...CD.scales.x,stacked:true,ticks:{...CD.scales.x.ticks,callback:v=>fmtN(v)}},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,font:{size:10}}}}
+    }
+  });
+}
+
+// ══════════════════════════════════════
+// REGION TABLE
+// ══════════════════════════════════════
+function renderRegTable(){
+  let d=[...S.byReg];
+  if(S.regFilter){const f=S.regFilter.toLowerCase();d=d.filter(r=>r.region.toLowerCase().includes(f)||r.fo.toLowerCase().includes(f));}
+  const tot=d.reduce((s,r)=>s+r.sales,0);
+  const total=d.length,page=S.regPage;
+  const sl=d.slice((page-1)*PAGE,page*PAGE);
+  const tb=document.getElementById('tbody-regions');
+  tb.innerHTML='';
+  if(!sl.length){tb.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🗺️</div>Нет данных</div></td></tr>';return;}
+  sl.forEach(r=>{
+    const share=tot>0?(r.sales/tot*100).toFixed(1):0;
+    const bc=r.localPct>=60?'#4a7c5e':r.localPct>=40?'#8a6a1a':'#9b3a2a';
+    tb.innerHTML+=`<tr>
+      <td><strong>${r.region}</strong></td>
+      <td><span class="badge badge-neutral">${normFO(r.fo)||'—'}</span></td>
+      <td>${fmtN(r.sales)}</td><td>${fmtN(r.local)}</td>
+      <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(r.localPct)}%;background:${bc}"></div></div><span class="bar-val">${r.localPct.toFixed(1)}%</span></div></td>
+      <td>${share}%</td>
+    </tr>`;
+  });
+  renderPag('pag-regions',total,page,p=>{S.regPage=p;renderRegTable();});
+}
+function filterReg(){S.regFilter=document.getElementById('search-region').value.trim();S.regPage=1;renderRegTable();}
+
+// ══════════════════════════════════════
+// WEEK CHARTS
+// ══════════════════════════════════════
+function populateWkFilter(){
+  const sel=document.getElementById('filter-nm-week');
+  sel.innerHTML='<option value="all">Все артикулы</option>';
+  S.byArt.slice(0,50).forEach(a=>{
+    sel.innerHTML+=`<option value="${a.nmId}">${a.nmId}${a.vendorCode?' — '+a.vendorCode:''}</option>`;
+  });
+}
+
+function renderWeekCharts(){
+  const nm=document.getElementById('filter-nm-week').value;
+  let wks;
+  if(nm==='all'){wks=S.byWeek;}else{
+    const a=S.byArt.find(a=>a.nmId===parseInt(nm));
+    wks=a?Object.entries(a.weeks).map(([k,v])=>{
+      const p=v.sales>0?v.local/v.sales*100:0;
+      return{week:k,sales:v.sales,local:v.local,localPct:p,ktr:getKTR(p)};
+    }).sort((a,b)=>a.week.localeCompare(b.week)):[];
   }
+  const lbl=wks.map(w=>fmtWk(w.week));
 
-  if (S.ktrFilter === 'low')  data = data.filter(a => a.ktr < 1.0);
-  if (S.ktrFilter === 'norm') data = data.filter(a => a.ktr === 1.0);
-  if (S.ktrFilter === 'high') data = data.filter(a => a.ktr > 1.0);
-
-  const sort = S.articleSort;
-  if (sort === 'orders-desc') data.sort((a,b) => b.orders - a.orders);
-  if (sort === 'ktr-desc')    data.sort((a,b) => b.ktr - a.ktr);
-  if (sort === 'ktr-asc')     data.sort((a,b) => a.ktr - b.ktr);
-  if (sort === 'local-desc')  data.sort((a,b) => b.localPct - a.localPct);
-  if (sort === 'local-asc')   data.sort((a,b) => a.localPct - b.localPct);
-
-  const total  = data.length;
-  const page   = S.articlePage;
-  const sliced = data.slice((page-1)*PAGE, page*PAGE);
-
-  const tbody = document.getElementById('tbody-articles');
-  tbody.innerHTML = '';
-
-  if (!sliced.length) {
-    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📦</div>Нет данных</div></td></tr>';
-  } else {
-    sliced.forEach(a => {
-      const row     = getKTRRow(a.localPct);
-      const bgColor = row[4]; const txtColor = row[5];
-      const label   = row[3];
-      const pct     = a.localPct.toFixed(1);
-      const barW    = Math.round(a.localPct);
-      const barColor = a.localPct >= 60 ? '#4a7c5e' : a.localPct >= 40 ? '#8a6a1a' : '#9b3a2a';
-
-      tbody.innerHTML += `
-        <tr>
-          <td>
-            <strong>${a.nmId}</strong>
-            ${a.vendorCode ? `<div style="font-size:11px;color:var(--muted)">${a.vendorCode}</div>` : ''}
-          </td>
-          <td>${fmtNum(a.orders)}</td>
-          <td>${fmtNum(a.local)}</td>
-          <td>
-            <div class="bar-wrap">
-              <div class="bar-bg"><div class="bar-fill" style="width:${barW}%;background:${barColor}"></div></div>
-              <span class="bar-val">${pct}%</span>
-            </div>
-          </td>
-          <td>
-            <span style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;
-              background:${bgColor};color:${txtColor};padding:3px 10px;border-radius:6px;">
-              ${a.ktr.toFixed(2)}
-            </span>
-          </td>
-          <td><span class="badge" style="background:${bgColor};color:${txtColor}">${label}</span></td>
-        </tr>`;
-    });
-  }
-
-  renderPagination('pagination-articles', total, page,
-    p => { S.articlePage = p; renderArticleTable(); });
-}
-
-function filterArticleTable() {
-  S.articleFilter = document.getElementById('search-article').value.trim();
-  S.articleSort   = document.getElementById('sort-article').value;
-  S.ktrFilter     = document.getElementById('filter-ktr').value;
-  S.articlePage   = 1;
-  renderArticleTable();
-}
-
-// ═══════════════════════════════════════════════════
-//  REGION CHARTS
-// ═══════════════════════════════════════════════════
-function renderRegionCharts() {
-  const top15 = S.byRegion.slice(0, 15);
-
-  // Bar by region
-  dc('regions-bar');
-  CHARTS['regions-bar'] = new Chart(document.getElementById('chart-regions-bar'), {
-    type: 'bar',
-    data: {
-      labels: top15.map(r => r.region.length > 20 ? r.region.slice(0,18)+'…' : r.region),
-      datasets: [{
-        data: top15.map(r => r.orders),
-        backgroundColor: '#2d2d2a',
-        borderRadius: 4, borderSkipped: false,
-      }]
-    },
-    options: {
-      ...CD, indexAxis: 'y',
-      plugins: { ...CD.plugins, tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => fmtNum(ctx.raw) + ' заказов' } } },
-      scales: {
-        x: { ...CD.scales.x, ticks: { ...CD.scales.x.ticks, callback: v => fmtNum(v) } },
-        y: { ...CD.scales.y, ticks: { ...CD.scales.y.ticks, font: { size: 10 } } }
-      }
+  dc('wk-ktr');
+  CHARTS['wk-ktr']=new Chart(document.getElementById('chart-wk-ktr'),{
+    type:'line',
+    data:{labels:lbl,datasets:[
+      {label:'КТР (ИЛ)',data:wks.map(w=>+w.ktr.toFixed(2)),borderColor:'#2d2d2a',backgroundColor:'#2d2d2a15',fill:true,tension:.3,pointRadius:4,borderWidth:2,pointBackgroundColor:'#2d2d2a'},
+      {label:'Цель 1.0',data:wks.map(()=>1),borderColor:'#8a8578',borderDash:[5,5],borderWidth:1,pointRadius:0,fill:false}
+    ]},
+    options:{...CD,
+      plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},color:'#8a8578',boxWidth:12}}},
+      scales:{x:CD.scales.x,y:{...CD.scales.y,min:.4,max:2.1}}
     }
   });
+  dc('wk-sales');
+  CHARTS['wk-sales']=new Chart(document.getElementById('chart-wk-sales'),{
+    type:'bar',
+    data:{labels:lbl,datasets:[{data:wks.map(w=>w.sales),backgroundColor:'#4a7c5ebb',borderRadius:4}]},
+    options:{...CD,plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>fmtN(ctx.raw)+' продаж'}}},
+      scales:{x:CD.scales.x,y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>fmtN(v)}}}}
+  });
+  dc('wk-local');
+  CHARTS['wk-local']=new Chart(document.getElementById('chart-wk-local'),{
+    type:'line',
+    data:{labels:lbl,datasets:[{data:wks.map(w=>+w.localPct.toFixed(1)),borderColor:'#4a7c5e',backgroundColor:'#4a7c5e15',fill:true,tension:.3,pointRadius:4,borderWidth:2,pointBackgroundColor:'#4a7c5e'}]},
+    options:{...CD,plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>ctx.raw+'% локальных'}}},
+      scales:{x:CD.scales.x,y:{...CD.scales.y,min:0,max:100,ticks:{...CD.scales.y.ticks,callback:v=>v+'%'}}}}
+  });
 
-  // Stacked local vs non-local
-  const top10 = S.byRegion.slice(0, 10);
-  dc('regions-stack');
-  CHARTS['regions-stack'] = new Chart(document.getElementById('chart-regions-stack'), {
-    type: 'bar',
-    data: {
-      labels: top10.map(r => r.region.length > 16 ? r.region.slice(0,14)+'…' : r.region),
-      datasets: [
-        {
-          label: 'Локальные', data: top10.map(r => r.local),
-          backgroundColor: '#4a7c5e', borderRadius: 0,
-        },
-        {
-          label: 'Нелокальные', data: top10.map(r => r.orders - r.local),
-          backgroundColor: '#ddd8ce', borderRadius: 0,
-        }
-      ]
-    },
-    options: {
-      ...CD, indexAxis: 'y',
-      plugins: {
-        ...CD.plugins,
-        legend: { display: true, position: 'top', labels: { font: { family:'Inter', size:11 }, color:'#8a8578', boxWidth:12 } },
-        tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtNum(ctx.raw)}` } }
-      },
-      scales: {
-        x: { ...CD.scales.x, stacked: true, ticks: { ...CD.scales.x.ticks, callback: v => fmtNum(v) } },
-        y: { ...CD.scales.y, stacked: true, ticks: { ...CD.scales.y.ticks, font: { size: 10 } } }
-      }
-    }
+  // Table
+  const tb=document.getElementById('tbody-weeks');
+  tb.innerHTML='';
+  wks.forEach((w,i)=>{
+    const prev=i>0?wks[i-1].ktr:null;
+    const d=prev!==null?w.ktr-prev:null;
+    const dh=d===null?'<span class="badge badge-neutral">—</span>':
+      Math.abs(d)<.001?'<span class="badge badge-neutral">0</span>':
+      d<0?`<span class="badge badge-green">${d.toFixed(2)}</span>`:
+      `<span class="badge badge-red">+${d.toFixed(2)}</span>`;
+    const row=getKTRRow(w.localPct);
+    tb.innerHTML+=`<tr>
+      <td>${fmtWk(w.week)}</td><td>${fmtN(w.sales)}</td><td>${fmtN(w.local)}</td>
+      <td>${w.localPct.toFixed(1)}%</td>
+      <td><span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;background:${row[4]};color:${row[5]};padding:2px 9px;border-radius:5px">${w.ktr.toFixed(2)}</span></td>
+      <td>${dh}</td>
+    </tr>`;
   });
 }
 
-// ═══════════════════════════════════════════════════
-//  REGION TABLE
-// ═══════════════════════════════════════════════════
-function renderRegionTable() {
-  let data = [...S.byRegion];
-  if (S.regionFilter) {
-    const f = S.regionFilter.toLowerCase();
-    data = data.filter(r => r.region.toLowerCase().includes(f) || r.fo.toLowerCase().includes(f));
-  }
-
-  const totalOrders = data.reduce((s, r) => s + r.orders, 0);
-  const total  = data.length;
-  const page   = S.regionPage;
-  const sliced = data.slice((page-1)*PAGE, page*PAGE);
-
-  const tbody = document.getElementById('tbody-regions');
-  tbody.innerHTML = '';
-
-  if (!sliced.length) {
-    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🗺️</div>Нет данных</div></td></tr>';
-  } else {
-    sliced.forEach(r => {
-      const share    = totalOrders > 0 ? (r.orders / totalOrders * 100).toFixed(1) : 0;
-      const localPct = r.localPct.toFixed(1);
-      const barW     = Math.round(r.localPct);
-      const barColor = r.localPct >= 60 ? '#4a7c5e' : r.localPct >= 40 ? '#8a6a1a' : '#9b3a2a';
-
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>${r.region}</strong></td>
-          <td><span class="badge badge-neutral">${r.fo}</span></td>
-          <td>${fmtNum(r.orders)}</td>
-          <td>${fmtNum(r.local)}</td>
-          <td>
-            <div class="bar-wrap">
-              <div class="bar-bg"><div class="bar-fill" style="width:${barW}%;background:${barColor}"></div></div>
-              <span class="bar-val">${localPct}%</span>
-            </div>
-          </td>
-          <td>${share}%</td>
-        </tr>`;
-    });
-  }
-
-  renderPagination('pagination-regions', total, page,
-    p => { S.regionPage = p; renderRegionTable(); });
+// ══════════════════════════════════════
+// KTR REF TABLE
+// ══════════════════════════════════════
+function renderKTRRef(){
+  document.getElementById('ktr-ref-grid').innerHTML=KTR_TABLE.map(r=>`
+    <div class="ktr-ref-cell" style="background:${r[4]};border:1px solid ${r[5]}33">
+      <div class="ktr-range">${r[0]}–${r[1]}%</div>
+      <div class="ktr-num" style="color:${r[5]}">${r[2].toFixed(2)}</div>
+      <div style="font-size:10px;color:${r[5]};margin-top:2px">${r[3]}</div>
+    </div>`).join('');
 }
 
-function filterRegionTable() {
-  S.regionFilter = document.getElementById('search-region').value.trim();
-  S.regionPage = 1;
-  renderRegionTable();
-}
-
-// ═══════════════════════════════════════════════════
-//  WEEK CHARTS
-// ═══════════════════════════════════════════════════
-function populateWeekFilter() {
-  const sel = document.getElementById('filter-nm-week');
-  sel.innerHTML = '<option value="all">Все артикулы</option>';
-  S.byArticle.slice(0, 50).forEach(a => {
-    sel.innerHTML += `<option value="${a.nmId}">${a.nmId}${a.vendorCode ? ' — ' + a.vendorCode : ''}</option>`;
-  });
-}
-
-function renderWeekCharts() {
-  const nmFilter = document.getElementById('filter-nm-week').value;
-  let weeks;
-
-  if (nmFilter === 'all') {
-    weeks = S.byWeek;
-  } else {
-    const nmId = parseInt(nmFilter);
-    const art  = S.byArticle.find(a => a.nmId === nmId);
-    if (art && art.weeks) {
-      weeks = Object.entries(art.weeks).map(([k, v]) => ({
-        week: k, orders: v.orders, local: v.local,
-        localPct: v.orders > 0 ? v.local / v.orders * 100 : 0,
-        ktr: getKTR(v.orders > 0 ? v.local / v.orders * 100 : 0)
-      })).sort((a, b) => a.week.localeCompare(b.week));
-    } else { weeks = []; }
-  }
-
-  const labels = weeks.map(w => fmtWeek(w.week));
-
-  // KTR line
-  dc('weeks-ktr');
-  CHARTS['weeks-ktr'] = new Chart(document.getElementById('chart-weeks-ktr'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'КТР (ИЛ)',
-          data: weeks.map(w => +w.ktr.toFixed(2)),
-          borderColor: '#2d2d2a', backgroundColor: '#2d2d2a15',
-          fill: true, tension: 0.3, pointRadius: 4,
-          borderWidth: 2, pointBackgroundColor: '#2d2d2a',
-        },
-        {
-          label: 'Цель (1.0)',
-          data: weeks.map(() => 1.0),
-          borderColor: '#8a8578', borderDash: [5,5],
-          borderWidth: 1, pointRadius: 0, fill: false,
-        }
-      ]
-    },
-    options: {
-      ...CD,
-      plugins: {
-        ...CD.plugins,
-        legend: { display: true, position: 'top', labels: { font: { family:'Inter', size:11 }, color:'#8a8578', boxWidth:12 } },
-        tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}` } }
-      },
-      scales: {
-        x: { ...CD.scales.x },
-        y: { ...CD.scales.y, min: 0.4, max: 2.1, ticks: { ...CD.scales.y.ticks } }
-      }
-    }
-  });
-
-  // Orders bar
-  dc('weeks-orders');
-  CHARTS['weeks-orders'] = new Chart(document.getElementById('chart-weeks-orders'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{ data: weeks.map(w => w.orders), backgroundColor: '#4a7c5ebb', borderRadius: 4 }]
-    },
-    options: {
-      ...CD,
-      plugins: { ...CD.plugins, tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => fmtNum(ctx.raw) + ' заказов' } } },
-      scales: { x: CD.scales.x, y: { ...CD.scales.y, ticks: { ...CD.scales.y.ticks, callback: v => fmtNum(v) } } }
-    }
-  });
-
-  // Local% line
-  dc('weeks-local');
-  CHARTS['weeks-local'] = new Chart(document.getElementById('chart-weeks-local'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        data: weeks.map(w => +w.localPct.toFixed(1)),
-        borderColor: '#4a7c5e', backgroundColor: '#4a7c5e15',
-        fill: true, tension: 0.3, pointRadius: 4,
-        borderWidth: 2, pointBackgroundColor: '#4a7c5e',
-      }]
-    },
-    options: {
-      ...CD,
-      plugins: { ...CD.plugins, tooltip: { ...CD.plugins.tooltip, callbacks: { label: ctx => ctx.raw + '% локальных' } } },
-      scales: {
-        x: { ...CD.scales.x },
-        y: { ...CD.scales.y, min: 0, max: 100, ticks: { ...CD.scales.y.ticks, callback: v => v + '%' } }
-      }
-    }
-  });
-
-  // Week table
-  const tbody = document.getElementById('tbody-weeks');
-  tbody.innerHTML = '';
-  weeks.forEach((w, i) => {
-    const prev  = i > 0 ? weeks[i-1].ktr : null;
-    const delta = prev !== null ? w.ktr - prev : null;
-    const deltaHtml = delta === null ? '<span class="badge badge-neutral">—</span>' :
-      Math.abs(delta) < 0.001 ? '<span class="badge badge-neutral">0</span>' :
-      delta < 0 ? `<span class="badge badge-green">${delta.toFixed(2)}</span>` :
-      `<span class="badge badge-red">+${delta.toFixed(2)}</span>`;
-
-    const ktrRow = getKTRRow(w.localPct);
-    tbody.innerHTML += `
-      <tr>
-        <td>${fmtWeek(w.week)}</td>
-        <td>${fmtNum(w.orders)}</td>
-        <td>${fmtNum(w.local)}</td>
-        <td>${w.localPct.toFixed(1)}%</td>
-        <td>
-          <span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;
-            background:${ktrRow[4]};color:${ktrRow[5]};padding:2px 9px;border-radius:5px;">
-            ${w.ktr.toFixed(2)}
-          </span>
-        </td>
-        <td>${deltaHtml}</td>
-      </tr>`;
-  });
-}
-
-// ═══════════════════════════════════════════════════
-//  KTR REFERENCE TABLE
-// ═══════════════════════════════════════════════════
-function renderKTRRefTable() {
-  const grid = document.getElementById('ktr-ref-grid');
-  grid.innerHTML = KTR_TABLE.map(row => `
-    <div class="ktr-ref-cell" style="background:${row[4]};border:1px solid ${row[5]}22">
-      <div class="ktr-range">${row[0]}–${row[1]}%</div>
-      <div class="ktr-num" style="color:${row[5]}">${row[2].toFixed(2)}</div>
-      <div style="font-size:10px;color:${row[5]};margin-top:2px">${row[3]}</div>
-    </div>
-  `).join('');
-}
-
-// ═══════════════════════════════════════════════════
-//  TABS
-// ═══════════════════════════════════════════════════
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-  setTimeout(() => {
-    if (name === 'articles') { renderArticleCharts(); }
-    if (name === 'regions')  { renderRegionCharts(); }
-    if (name === 'weeks')    { renderWeekCharts(); }
-  }, 50);
+  document.getElementById('tab-'+name).classList.add('active');
+  setTimeout(()=>{
+    if(name==='articles'){renderArtCharts();}
+    if(name==='regions'){renderRegCharts();}
+    if(name==='weeks'){renderWeekCharts();}
+  },50);
 }
 
-// ═══════════════════════════════════════════════════
-//  PAGINATION
-// ═══════════════════════════════════════════════════
-function renderPagination(id, total, page, onPage) {
-  const pages = Math.ceil(total / PAGE);
-  const el = document.getElementById(id);
-  if (pages <= 1) { el.innerHTML = ''; return; }
-  const from = (page-1)*PAGE + 1;
-  const to   = Math.min(page*PAGE, total);
-  el.innerHTML = `
-    <span>${fmtNum(from)}–${fmtNum(to)} из ${fmtNum(total)}</span>
-    <button class="pg-btn" onclick="(${onPage.toString()})(${page-1})" ${page===1?'disabled':''}>←</button>
-    <span>${page} / ${pages}</span>
-    <button class="pg-btn" onclick="(${onPage.toString()})(${page+1})" ${page===pages?'disabled':''}>→</button>
-  `;
+function renderPag(id,total,page,cb){
+  const pages=Math.ceil(total/PAGE);
+  const el=document.getElementById(id);
+  if(pages<=1){el.innerHTML='';return;}
+  el.innerHTML=`<span>${fmtN((page-1)*PAGE+1)}–${fmtN(Math.min(page*PAGE,total))} из ${fmtN(total)}</span>
+    <button class="pg-btn" onclick="(${cb.toString()})(${page-1})" ${page===1?'disabled':''}>←</button>
+    <span>${page}/${pages}</span>
+    <button class="pg-btn" onclick="(${cb.toString()})(${page+1})" ${page===pages?'disabled':''}>→</button>`;
 }
 
-// ═══════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════
-function fmtNum(n) {
-  if (n === undefined || n === null) return '—';
-  return new Intl.NumberFormat('ru-RU').format(Math.round(n));
+function fmtN(n){if(n==null)return'—';return new Intl.NumberFormat('ru-RU').format(Math.round(n));}
+function setLoad(on,msg,sub){
+  document.getElementById('loading-overlay').style.display=on?'flex':'none';
+  if(msg) document.getElementById('loading-text').textContent=msg;
+  if(sub!==undefined) document.getElementById('loading-sub').textContent=sub;
 }
-
-function setLoading(on, msg, sub) {
-  const el = document.getElementById('loading-overlay');
-  el.style.display = on ? 'flex' : 'none';
-  if (msg) document.getElementById('loading-text').textContent = msg;
-  if (sub !== undefined) document.getElementById('loading-sub').textContent = sub;
-}
-
-function showLoginError(msg) {
-  const el = document.getElementById('login-error');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function resetToLogin() {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('dashboard-screen').style.display = 'none';
-  document.getElementById('load-btn').disabled = false;
-  Object.keys(CHARTS).forEach(k => { CHARTS[k].destroy(); delete CHARTS[k]; });
+function showErr(msg){const e=document.getElementById('login-error');e.textContent=msg;e.style.display='block';}
+function resetToLogin(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('dashboard-screen').style.display='none';
+  document.getElementById('load-btn').disabled=false;
+  Object.keys(CHARTS).forEach(k=>{CHARTS[k].destroy();delete CHARTS[k];});
 }
 </script>
 </body>
