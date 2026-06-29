@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyForm · КТР Wildberries</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Unbounded:wght@400;600&display=swap');
+
+  :root {
+    --bg:       #e8e4dc;
+    --card:     #f5f2ec;
+    --card2:    #faf9f6;
+    --border:   #ddd8ce;
+    --text:     #1a1a18;
+    --muted:    #8a8578;
+    --accent:   #2d2d2a;
+    --green:    #4a7c5e;
+    --green-bg: #edf4ef;
+    --red:      #9b3a2a;
+    --radius:   14px;
+    --shadow:   0 2px 20px rgba(0,0,0,0.07);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 36px 32px 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: var(--shadow);
+  }
+
+  .login-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .login-logo {
+    width: 52px;
+    height: 52px;
+    background: #1a1a18;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 16px;
+    color: #f5f2ec;
+    letter-spacing: -1px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .login-brand-text h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .login-brand-text p {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-bg);
+    border: 1px solid #c0dbc9;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--green);
+    margin-bottom: 24px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .field-group { margin-bottom: 16px; }
+
+  .field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Inter', monospace;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field-input:focus { border-color: var(--accent); }
+  .field-input::placeholder { color: var(--muted); opacity: 0.5; }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .field-hint a { color: var(--green); text-decoration: none; }
+  .field-hint a:hover { text-decoration: underline; }
+
+  .date-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  input[type="date"].field-input { cursor: pointer; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: var(--card);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .login-error {
+    background: #fdecea;
+    border: 1px solid #f5c6c1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--red);
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  /* ── DASHBOARD ── */
+  #dashboard-screen { display: none; }
+
+  .dash-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .dash-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .dash-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--card);
+    font-weight: 600;
+  }
+
+  .dash-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .btn-secondary {
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: var(--border); }
+
+  .dash-body {
+    padding: 28px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* KPI strip */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+  }
+
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* Tab system */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 8px 18px;
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--card);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .panel-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+
+  .panel-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .chart-wrap {
+    padding: 20px 22px;
+    position: relative;
+  }
+
+  /* Tables */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .data-table th {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    background: var(--card2);
+  }
+
+  .data-table th:hover { color: var(--text); }
+
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #eeebe4;
+    font-size: 13px;
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--card2); }
+
+  .ctr-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ctr-bar-bg {
+    flex: 1;
+    height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .ctr-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .ctr-val { font-weight: 600; min-width: 42px; text-align: right; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-red { background: #fdecea; color: var(--red); }
+  .badge-neutral { background: var(--border); color: var(--muted); }
+
+  /* Two-col layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card2);
+  }
+
+  .filter-bar label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .filter-select {
+    padding: 6px 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .search-input {
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    width: 180px;
+  }
+
+  .search-input:focus { border-color: var(--accent); }
+
+  /* Sort arrows */
+  .sort-icon { opacity: 0.3; margin-left: 4px; }
+  .sort-icon.active { opacity: 1; }
+
+  /* Loading */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(232, 228, 220, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 100;
+    display: none;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+
+  /* Pagination */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .pg-btn {
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.1s;
+  }
+
+  .pg-btn:hover:not(:disabled) { background: var(--border); }
+  .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ LOGIN ════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo">EF</div>
+      <div class="login-brand-text">
+        <h1>EasyForm</h1>
+        <p>Wildberries · Аналитика рекламы</p>
+      </div>
+    </div>
+
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      Данные через Cloudflare Worker прокси
+    </div>
+
+    <div id="login-error" class="login-error"></div>
+
+    <div class="field-group">
+      <label class="field-label" for="api-token">API Токен WB (Продвижение + Статистика)</label>
+      <input class="field-input" type="password" id="api-token" placeholder="eyJhbGci..." autocomplete="off">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="proxy-url">URL Прокси (Cloudflare Worker)</label>
+      <input class="field-input" type="text" id="proxy-url" placeholder="https://wb-proxy.xxx.workers.dev" autocomplete="off">
+      <p class="field-hint">Нет прокси? <a href="https://developers.cloudflare.com/workers/" target="_blank">Создай бесплатно на Cloudflare</a></p>
+    </div>
+
+    <div class="date-row">
+      <div class="field-group" style="margin-bottom:0">
+        <label class="field-label" for="date-from">Период с</label>
+        <input class="field-input" type="date" id="date-from">
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <label class="field-label" for="date-to">Период по</label>
+        <input class="field-input" type="date" id="date-to">
+      </div>
+    </div>
+
+    <button class="btn-primary" id="load-btn" onclick="loadDashboard()">Загрузить дашборд</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ LOADER ════════════════════════════════ -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Загружаем данные...</div>
+</div>
+
+<!-- ════════════════════════════════ DASHBOARD ════════════════════════════════ -->
+<div id="dashboard-screen">
+  <header class="dash-header">
+    <div class="dash-brand">
+      <div class="dash-logo">EF</div>
+      КТР · Wildberries
+    </div>
+    <div class="dash-meta">
+      <span id="header-period">—</span>
+      <button class="btn-secondary" onclick="resetToLogin()">← Назад</button>
+    </div>
+  </header>
+
+  <div class="dash-body">
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip" id="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">Средний КТР</div>
+        <div class="kpi-value" id="kpi-avg-ctr">—</div>
+        <div class="kpi-sub">по всем артикулам</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Артикулов</div>
+        <div class="kpi-value" id="kpi-articles">—</div>
+        <div class="kpi-sub">с рекламными показами</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Всего показов</div>
+        <div class="kpi-value" id="kpi-views">—</div>
+        <div class="kpi-sub">за период</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Всего кликов</div>
+        <div class="kpi-value" id="kpi-clicks">—</div>
+        <div class="kpi-sub">за период</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('articles', this)">По артикулам</button>
+      <button class="tab-btn" onclick="switchTab('regions', this)">По регионам</button>
+      <button class="tab-btn" onclick="switchTab('weeks', this)">По неделям</button>
+    </div>
+
+    <!-- TAB: Articles -->
+    <div class="tab-panel active" id="tab-articles">
+      <div class="two-col">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Топ артикулов по КТР</div>
+              <div class="panel-sub">Топ-15 по среднему КТР</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:340px">
+            <canvas id="chart-articles"></canvas>
+          </div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">КТР vs Показы</div>
+              <div class="panel-sub">Эффективность vs охват</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:340px">
+            <canvas id="chart-scatter"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="filter-bar">
+          <label>Поиск:</label>
+          <input class="search-input" type="text" id="search-article" placeholder="Артикул или название..." oninput="filterArticleTable()">
+          <label>Сортировка:</label>
+          <select class="filter-select" id="sort-article" onchange="filterArticleTable()">
+            <option value="ctr-desc">КТР ↓</option>
+            <option value="ctr-asc">КТР ↑</option>
+            <option value="views-desc">Показы ↓</option>
+            <option value="clicks-desc">Клики ↓</option>
+          </select>
+        </div>
+        <table class="data-table" id="table-articles">
+          <thead>
+            <tr>
+              <th>Артикул</th>
+              <th>Показы</th>
+              <th>Клики</th>
+              <th>КТР</th>
+              <th>Расход, ₽</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-articles"></tbody>
+        </table>
+        <div class="pagination" id="pagination-articles"></div>
+      </div>
+    </div>
+
+    <!-- TAB: Regions -->
+    <div class="tab-panel" id="tab-regions">
+      <div class="two-col">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Топ регионов по КТР</div>
+              <div class="panel-sub">Горизонтальный бар-чарт</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:380px">
+            <canvas id="chart-regions"></canvas>
+          </div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Распределение показов</div>
+              <div class="panel-sub">Доля каждого региона</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:380px; display:flex; align-items:center; justify-content:center">
+            <canvas id="chart-pie" style="max-height:320px"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <div class="filter-bar">
+          <label>Поиск:</label>
+          <input class="search-input" type="text" id="search-region" placeholder="Регион..." oninput="filterRegionTable()">
+          <label>Мин. показов:</label>
+          <select class="filter-select" id="filter-views" onchange="filterRegionTable()">
+            <option value="0">Все</option>
+            <option value="100">≥ 100</option>
+            <option value="500">≥ 500</option>
+            <option value="1000">≥ 1 000</option>
+          </select>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Регион</th>
+              <th>Показы</th>
+              <th>Клики</th>
+              <th>КТР</th>
+              <th>Доля показов</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-regions"></tbody>
+        </table>
+        <div class="pagination" id="pagination-regions"></div>
+      </div>
+    </div>
+
+    <!-- TAB: Weeks -->
+    <div class="tab-panel" id="tab-weeks">
+      <div class="panel-card" style="margin-bottom:16px">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Динамика КТР по неделям</div>
+            <div class="panel-sub">Средний КТР в разрезе недель</div>
+          </div>
+          <div>
+            <select class="filter-select" id="filter-article-week" onchange="renderWeekChart()">
+              <option value="all">Все артикулы</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:320px">
+          <canvas id="chart-weeks"></canvas>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Показы по неделям</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:240px">
+            <canvas id="chart-views-weeks"></canvas>
+          </div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Клики по неделям</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:240px">
+            <canvas id="chart-clicks-weeks"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="panel-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Неделя</th>
+              <th>Показы</th>
+              <th>Клики</th>
+              <th>КТР</th>
+              <th>Δ КТР</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-weeks"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let state = {
+  token: '', proxy: '', dateFrom: '', dateTo: '',
+  rawData: [],      // массив кампаний
+  articles: [],     // агрегированные по артикулу
+  regions: [],      // агрегированные по региону
+  weeks: [],        // агрегированные по неделе
+  articlePage: 1, regionPage: 1,
+  articleFilter: '', regionFilter: '', regionMinViews: 0,
+  articleSort: 'ctr-desc',
+};
+
+const PAGE_SIZE = 20;
+
+// ═══════════════════════════════════════════════════
+//  DATE DEFAULTS
+// ═══════════════════════════════════════════════════
+(function initDates() {
+  const to = new Date();
+  const from = new Date(); from.setDate(from.getDate() - 14);
+  document.getElementById('date-to').value = fmt(to);
+  document.getElementById('date-from').value = fmt(from);
+  // Restore saved credentials
+  const saved = localStorage.getItem('ef_creds');
+  if (saved) {
+    try {
+      const c = JSON.parse(saved);
+      if (c.token) document.getElementById('api-token').value = c.token;
+      if (c.proxy) document.getElementById('proxy-url').value = c.proxy;
+    } catch(e) {}
+  }
+})();
+
+function fmt(d) {
+  return d.toISOString().slice(0, 10);
+}
+
+// ═══════════════════════════════════════════════════
+//  API CALLS via Cloudflare Worker proxy
+// ═══════════════════════════════════════════════════
+
+// The Cloudflare Worker should forward requests like:
+// POST /proxy?url=https://advert-api.wb.ru/...
+// with Authorization header forwarded
+
+async function apiCall(endpoint, method='GET', body=null) {
+  const proxy = state.proxy.replace(/\/$/, '');
+  const url = `${proxy}?url=${encodeURIComponent('https://advert-api.wb.ru' + endpoint)}`;
+  const opts = {
+    method,
+    headers: {
+      'Authorization': state.token,
+      'Content-Type': 'application/json',
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status}: ${txt.slice(0,200)}`);
+  }
+  return res.json();
+}
+
+// ═══════════════════════════════════════════════════
+//  LOAD DASHBOARD
+// ═══════════════════════════════════════════════════
+async function loadDashboard() {
+  const token = document.getElementById('api-token').value.trim();
+  const proxy = document.getElementById('proxy-url').value.trim();
+  const dateFrom = document.getElementById('date-from').value;
+  const dateTo = document.getElementById('date-to').value;
+
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  if (!token) { showError('Введите API токен WB'); return; }
+  if (!proxy) { showError('Введите URL прокси'); return; }
+  if (!dateFrom || !dateTo) { showError('Укажите период'); return; }
+  if (dateFrom > dateTo) { showError('Дата начала должна быть раньше даты окончания'); return; }
+
+  state = { ...state, token, proxy, dateFrom, dateTo };
+  localStorage.setItem('ef_creds', JSON.stringify({ token, proxy }));
+
+  setLoading(true, 'Получаем список кампаний...');
+  document.getElementById('load-btn').disabled = true;
+
+  try {
+    // 1. Fetch list of ad campaigns
+    setLoading(true, 'Список кампаний...');
+    const campaigns = await fetchCampaigns();
+    if (!campaigns.length) {
+      showError('Нет рекламных кампаний за указанный период');
+      setLoading(false);
+      document.getElementById('load-btn').disabled = false;
+      return;
+    }
+
+    // 2. Fetch stats for each campaign
+    setLoading(true, `Статистика по ${campaigns.length} кампаниям...`);
+    const statsData = await fetchStats(campaigns, dateFrom, dateTo);
+
+    // 3. Process & aggregate
+    setLoading(true, 'Обрабатываем данные...');
+    processData(statsData, campaigns, dateFrom, dateTo);
+
+    // 4. Show dashboard
+    setLoading(false);
+    showDashboard();
+
+  } catch(e) {
+    setLoading(false);
+    document.getElementById('load-btn').disabled = false;
+    showError('Ошибка: ' + e.message);
+  }
+}
+
+// ── Fetch campaigns list ──────────────────────────
+async function fetchCampaigns() {
+  // WB API: GET /adv/v1/promotion/count — count by status
+  // Then GET /adv/v1/promotion/adverts — list
+  // Status: 7=running, 9=paused, 11=stopped
+  const statuses = [7, 9, 11];
+  let all = [];
+  for (const st of statuses) {
+    try {
+      const res = await apiCall(`/adv/v1/promotion/adverts?status=${st}&order=create&direction=desc&limit=50&offset=0`);
+      if (Array.isArray(res)) all = all.concat(res);
+    } catch(e) { /* skip status */ }
+  }
+  return all;
+}
+
+// ── Fetch stats ────────────────────────────────────
+async function fetchStats(campaigns, dateFrom, dateTo) {
+  // WB API POST /adv/v2/fullstats
+  // Max 100 campaigns per request, max 31 days
+  const ids = campaigns.map(c => ({
+    id: c.advertId,
+    dates: [dateFrom, dateTo]
+  }));
+
+  const chunkSize = 100;
+  let allStats = [];
+  for (let i = 0; i < ids.length; i += chunkSize) {
+    const chunk = ids.slice(i, i + chunkSize);
+    const res = await apiCall('/adv/v2/fullstats', 'POST', chunk);
+    if (Array.isArray(res)) allStats = allStats.concat(res);
+  }
+  return allStats;
+}
+
+// ═══════════════════════════════════════════════════
+//  DATA PROCESSING
+// ═══════════════════════════════════════════════════
+function processData(statsData, campaigns, dateFrom, dateTo) {
+  // Build campaign map
+  const campMap = {};
+  campaigns.forEach(c => { campMap[c.advertId] = c; });
+
+  const byArticle = {};
+  const byRegion = {};
+  const byWeek = {};
+
+  statsData.forEach(stat => {
+    if (!stat || !stat.days) return;
+    const campId = stat.advertId;
+
+    stat.days.forEach(day => {
+      if (!day || !day.apps) return;
+      const dateStr = day.date || '';
+      const weekKey = getWeekKey(dateStr);
+
+      day.apps.forEach(app => {
+        if (!app || !app.nm) return;
+        app.nm.forEach(nm => {
+          const nmId = nm.nmId || 0;
+          const views = nm.views || 0;
+          const clicks = nm.clicks || 0;
+          const sum = nm.sum || 0;
+
+          // By article
+          if (!byArticle[nmId]) byArticle[nmId] = { nmId, views: 0, clicks: 0, sum: 0, weeks: {} };
+          byArticle[nmId].views += views;
+          byArticle[nmId].clicks += clicks;
+          byArticle[nmId].sum += sum;
+
+          // By region (from geo data in day level)
+          const geoKey = day.geoId || day.geo || 'Неизвестно';
+          if (!byRegion[geoKey]) byRegion[geoKey] = { region: geoKey, views: 0, clicks: 0 };
+          byRegion[geoKey].views += views;
+          byRegion[geoKey].clicks += clicks;
+
+          // By week
+          if (!byWeek[weekKey]) byWeek[weekKey] = { week: weekKey, views: 0, clicks: 0 };
+          byWeek[weekKey].views += views;
+          byWeek[weekKey].clicks += clicks;
+
+          // Article weeks
+          if (!byArticle[nmId].weeks[weekKey]) byArticle[nmId].weeks[weekKey] = { views: 0, clicks: 0 };
+          byArticle[nmId].weeks[weekKey].views += views;
+          byArticle[nmId].weeks[weekKey].clicks += clicks;
+        });
+      });
+
+      // Also process geo from day.geo[] if available
+      if (day.geo && Array.isArray(day.geo)) {
+        day.geo.forEach(g => {
+          const geoKey = g.name || g.geoId || 'Неизвестно';
+          const gViews = g.views || 0;
+          const gClicks = g.clicks || 0;
+          if (!byRegion[geoKey]) byRegion[geoKey] = { region: geoKey, views: 0, clicks: 0 };
+          byRegion[geoKey].views += gViews;
+          byRegion[geoKey].clicks += gClicks;
+        });
+      }
+    });
+  });
+
+  // Convert to arrays
+  state.articles = Object.values(byArticle).map(a => ({
+    ...a,
+    ctr: a.views > 0 ? (a.clicks / a.views * 100) : 0
+  })).sort((a, b) => b.ctr - a.ctr);
+
+  state.regions = Object.values(byRegion).map(r => ({
+    ...r,
+    ctr: r.views > 0 ? (r.clicks / r.views * 100) : 0
+  })).sort((a, b) => b.views - a.views);
+
+  state.weeks = Object.entries(byWeek).map(([k, v]) => ({
+    week: k,
+    views: v.views,
+    clicks: v.clicks,
+    ctr: v.views > 0 ? (v.clicks / v.views * 100) : 0
+  })).sort((a, b) => a.week.localeCompare(b.week));
+
+  state.rawData = statsData;
+}
+
+function getWeekKey(dateStr) {
+  if (!dateStr) return 'Неизвестно';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr.slice(0, 10);
+  // Get Monday of the week
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1);
+  return `${d.toISOString().slice(0, 10)}`;
+}
+
+function fmtWeek(str) {
+  if (!str || str.length < 10) return str;
+  const d = new Date(str);
+  if (isNaN(d)) return str;
+  const end = new Date(d); end.setDate(end.getDate() + 6);
+  const mo = d => `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;
+  return `${mo(d)}–${mo(end)}`;
+}
+
+// ═══════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════
+const CHARTS = {};
+
+const PALETTE = {
+  dark: '#2d2d2a',
+  green: '#4a7c5e',
+  mid: '#8a8578',
+  light: '#ddd8ce',
+  muted: '#b8b2a8',
+};
+
+const chartDefaults = {
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1a1a18',
+      titleFont: { family: 'Unbounded', size: 11 },
+      bodyFont: { family: 'Inter', size: 12 },
+      padding: 10,
+      cornerRadius: 8,
+    }
+  },
+  scales: {
+    x: {
+      grid: { color: '#eeebe4' },
+      ticks: { font: { family: 'Inter', size: 11 }, color: '#8a8578' }
+    },
+    y: {
+      grid: { color: '#eeebe4' },
+      ticks: { font: { family: 'Inter', size: 11 }, color: '#8a8578' }
+    }
+  }
+};
+
+function destroyChart(id) {
+  if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; }
+}
+
+function renderArticleChart() {
+  destroyChart('articles');
+  const top = [...state.articles].sort((a,b) => b.ctr - a.ctr).slice(0, 15);
+  CHARTS['articles'] = new Chart(document.getElementById('chart-articles'), {
+    type: 'bar',
+    data: {
+      labels: top.map(a => `${a.nmId}`),
+      datasets: [{
+        data: top.map(a => +a.ctr.toFixed(2)),
+        backgroundColor: top.map((a, i) => i === 0 ? PALETTE.dark : (i < 5 ? PALETTE.green : PALETTE.muted)),
+        borderRadius: 5,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      plugins: {
+        ...chartDefaults.plugins,
+        tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: {
+            label: ctx => `КТР: ${ctx.raw}%`
+          }
+        }
+      },
+      scales: {
+        x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, callback: v => v + '%' } },
+        y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+function renderScatterChart() {
+  destroyChart('scatter');
+  const data = state.articles.filter(a => a.views > 0).map(a => ({
+    x: a.views,
+    y: +a.ctr.toFixed(2),
+    label: `${a.nmId}`
+  }));
+  CHARTS['scatter'] = new Chart(document.getElementById('chart-scatter'), {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        data,
+        backgroundColor: PALETTE.dark + '99',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: {
+            label: ctx => `Арт. ${ctx.raw.label}: ${ctx.raw.y}% КТР, ${fmtNum(ctx.raw.x)} показов`
+          }
+        }
+      },
+      scales: {
+        x: { ...chartDefaults.scales.x, title: { display: true, text: 'Показы', font: { size: 11 } }, ticks: { ...chartDefaults.scales.x.ticks, callback: v => fmtNum(v) } },
+        y: { ...chartDefaults.scales.y, title: { display: true, text: 'КТР %', font: { size: 11 } }, ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } }
+      }
+    }
+  });
+}
+
+function renderRegionChart() {
+  destroyChart('regions');
+  const top = [...state.regions].sort((a,b) => b.ctr - a.ctr).slice(0, 15);
+  CHARTS['regions'] = new Chart(document.getElementById('chart-regions'), {
+    type: 'bar',
+    data: {
+      labels: top.map(r => r.region),
+      datasets: [{
+        data: top.map(r => +r.ctr.toFixed(2)),
+        backgroundColor: PALETTE.green,
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      plugins: {
+        ...chartDefaults.plugins,
+        tooltip: { ...chartDefaults.plugins.tooltip, callbacks: { label: ctx => `КТР: ${ctx.raw}%` } }
+      },
+      scales: {
+        x: { ...chartDefaults.scales.x, ticks: { ...chartDefaults.scales.x.ticks, callback: v => v + '%' } },
+        y: { ...chartDefaults.scales.y }
+      }
+    }
+  });
+}
+
+function renderPieChart() {
+  destroyChart('pie');
+  const top = [...state.regions].sort((a,b) => b.views - a.views).slice(0, 10);
+  const colors = ['#2d2d2a','#4a7c5e','#8a8578','#b8b2a8','#c8d8cc','#d6d1c8','#e8e4dc','#6b7d73','#3d5a4a','#9aada3'];
+  CHARTS['pie'] = new Chart(document.getElementById('chart-pie'), {
+    type: 'doughnut',
+    data: {
+      labels: top.map(r => r.region),
+      datasets: [{
+        data: top.map(r => r.views),
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: '#f5f2ec',
+      }]
+    },
+    options: {
+      cutout: '60%',
+      plugins: {
+        legend: {
+          display: true,
+          position: 'right',
+          labels: { font: { family: 'Inter', size: 11 }, color: '#8a8578', boxWidth: 12, padding: 8 }
+        },
+        tooltip: {
+          ...chartDefaults.plugins.tooltip,
+          callbacks: { label: ctx => `${ctx.label}: ${fmtNum(ctx.raw)} показов` }
+        }
+      }
+    }
+  });
+}
+
+function renderWeekChart() {
+  const articleFilter = document.getElementById('filter-article-week').value;
+  let weeks;
+
+  if (articleFilter === 'all') {
+    weeks = state.weeks;
+  } else {
+    const nmId = parseInt(articleFilter);
+    const art = state.articles.find(a => a.nmId === nmId);
+    if (art && art.weeks) {
+      weeks = Object.entries(art.weeks).map(([k, v]) => ({
+        week: k, views: v.views, clicks: v.clicks,
+        ctr: v.views > 0 ? v.clicks / v.views * 100 : 0
+      })).sort((a, b) => a.week.localeCompare(b.week));
+    } else { weeks = []; }
+  }
+
+  const labels = weeks.map(w => fmtWeek(w.week));
+
+  destroyChart('weeks');
+  CHARTS['weeks'] = new Chart(document.getElementById('chart-weeks'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: weeks.map(w => +w.ctr.toFixed(2)),
+        borderColor: PALETTE.dark,
+        backgroundColor: PALETTE.dark + '15',
+        fill: true,
+        tension: 0.35,
+        pointBackgroundColor: PALETTE.dark,
+        pointRadius: 4,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: {
+        ...chartDefaults.plugins,
+        tooltip: { ...chartDefaults.plugins.tooltip, callbacks: { label: ctx => `КТР: ${ctx.raw}%` } }
+      },
+      scales: {
+        x: { ...chartDefaults.scales.x },
+        y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => v + '%' } }
+      }
+    }
+  });
+
+  destroyChart('views-weeks');
+  CHARTS['views-weeks'] = new Chart(document.getElementById('chart-views-weeks'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: weeks.map(w => w.views),
+        backgroundColor: PALETTE.green + 'bb',
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { ...chartDefaults.plugins, tooltip: { ...chartDefaults.plugins.tooltip, callbacks: { label: ctx => fmtNum(ctx.raw) + ' показов' } } },
+      scales: { x: chartDefaults.scales.x, y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => fmtNum(v) } } }
+    }
+  });
+
+  destroyChart('clicks-weeks');
+  CHARTS['clicks-weeks'] = new Chart(document.getElementById('chart-clicks-weeks'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: weeks.map(w => w.clicks),
+        backgroundColor: PALETTE.dark + 'bb',
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { ...chartDefaults.plugins, tooltip: { ...chartDefaults.plugins.tooltip, callbacks: { label: ctx => fmtNum(ctx.raw) + ' кликов' } } },
+      scales: { x: chartDefaults.scales.x, y: { ...chartDefaults.scales.y, ticks: { ...chartDefaults.scales.y.ticks, callback: v => fmtNum(v) } } }
+    }
+  });
+
+  // Week table
+  const tbody = document.getElementById('tbody-weeks');
+  tbody.innerHTML = '';
+  weeks.forEach((w, i) => {
+    const prev = i > 0 ? weeks[i-1].ctr : null;
+    const delta = prev !== null ? w.ctr - prev : null;
+    const deltaHtml = delta === null ? '<span class="badge badge-neutral">—</span>' :
+      delta > 0 ? `<span class="badge badge-green">+${delta.toFixed(2)}%</span>` :
+      delta < 0 ? `<span class="badge badge-red">${delta.toFixed(2)}%</span>` :
+      `<span class="badge badge-neutral">0%</span>`;
+    tbody.innerHTML += `
+      <tr>
+        <td>${fmtWeek(w.week)}</td>
+        <td>${fmtNum(w.views)}</td>
+        <td>${fmtNum(w.clicks)}</td>
+        <td><strong>${w.ctr.toFixed(2)}%</strong></td>
+        <td>${deltaHtml}</td>
+      </tr>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  TABLES
+// ═══════════════════════════════════════════════════
+function renderArticleTable() {
+  let data = [...state.articles];
+  // Filter
+  if (state.articleFilter) {
+    data = data.filter(a => String(a.nmId).includes(state.articleFilter));
+  }
+  // Sort
+  const sort = state.articleSort;
+  if (sort === 'ctr-desc') data.sort((a,b) => b.ctr - a.ctr);
+  else if (sort === 'ctr-asc') data.sort((a,b) => a.ctr - b.ctr);
+  else if (sort === 'views-desc') data.sort((a,b) => b.views - a.views);
+  else if (sort === 'clicks-desc') data.sort((a,b) => b.clicks - a.clicks);
+
+  const total = data.length;
+  const page = state.articlePage;
+  const sliced = data.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+  const maxCtr = Math.max(...data.map(a => a.ctr), 1);
+
+  const tbody = document.getElementById('tbody-articles');
+  tbody.innerHTML = '';
+  if (!sliced.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📭</div>Нет данных</div></td></tr>';
+  } else {
+    sliced.forEach(a => {
+      const pct = (a.ctr / maxCtr * 100).toFixed(0);
+      const badge = a.ctr >= 3 ? 'badge-green' : a.ctr >= 1 ? 'badge-neutral' : 'badge-red';
+      const label = a.ctr >= 3 ? 'Отлично' : a.ctr >= 1 ? 'Норма' : 'Низкий';
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${a.nmId}</strong></td>
+          <td>${fmtNum(a.views)}</td>
+          <td>${fmtNum(a.clicks)}</td>
+          <td>
+            <div class="ctr-bar-wrap">
+              <div class="ctr-bar-bg"><div class="ctr-bar-fill" style="width:${pct}%"></div></div>
+              <span class="ctr-val">${a.ctr.toFixed(2)}%</span>
+            </div>
+          </td>
+          <td>${fmtNum(Math.round(a.sum))} ₽</td>
+          <td><span class="badge ${badge}">${label}</span></td>
+        </tr>`;
+    });
+  }
+
+  renderPagination('pagination-articles', total, page, p => { state.articlePage = p; renderArticleTable(); });
+}
+
+function filterArticleTable() {
+  state.articleFilter = document.getElementById('search-article').value.trim();
+  state.articleSort = document.getElementById('sort-article').value;
+  state.articlePage = 1;
+  renderArticleTable();
+}
+
+function renderRegionTable() {
+  let data = [...state.regions];
+  if (state.regionFilter) data = data.filter(r => r.region.toLowerCase().includes(state.regionFilter.toLowerCase()));
+  if (state.regionMinViews > 0) data = data.filter(r => r.views >= state.regionMinViews);
+  data.sort((a,b) => b.views - a.views);
+
+  const totalViews = data.reduce((s, r) => s + r.views, 0);
+  const total = data.length;
+  const page = state.regionPage;
+  const sliced = data.slice((page-1)*PAGE_SIZE, page*PAGE_SIZE);
+
+  const tbody = document.getElementById('tbody-regions');
+  tbody.innerHTML = '';
+  if (!sliced.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div>Нет данных</div></td></tr>';
+  } else {
+    sliced.forEach(r => {
+      const share = totalViews > 0 ? (r.views / totalViews * 100).toFixed(1) : 0;
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${r.region}</strong></td>
+          <td>${fmtNum(r.views)}</td>
+          <td>${fmtNum(r.clicks)}</td>
+          <td><strong>${r.ctr.toFixed(2)}%</strong></td>
+          <td>
+            <div class="ctr-bar-wrap">
+              <div class="ctr-bar-bg"><div class="ctr-bar-fill" style="width:${share}%; background: #4a7c5e"></div></div>
+              <span class="ctr-val">${share}%</span>
+            </div>
+          </td>
+        </tr>`;
+    });
+  }
+
+  renderPagination('pagination-regions', total, page, p => { state.regionPage = p; renderRegionTable(); });
+}
+
+function filterRegionTable() {
+  state.regionFilter = document.getElementById('search-region').value.trim();
+  state.regionMinViews = parseInt(document.getElementById('filter-views').value) || 0;
+  state.regionPage = 1;
+  renderRegionTable();
+}
+
+function renderPagination(containerId, total, page, onPage) {
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const el = document.getElementById(containerId);
+  if (pages <= 1) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <span>${(page-1)*PAGE_SIZE+1}–${Math.min(page*PAGE_SIZE, total)} из ${fmtNum(total)}</span>
+    <button class="pg-btn" onclick="(${onPage.toString()})(${page-1})" ${page===1?'disabled':''}>←</button>
+    <span>${page} / ${pages}</span>
+    <button class="pg-btn" onclick="(${onPage.toString()})(${page+1})" ${page===pages?'disabled':''}>→</button>
+  `;
+}
+
+// ═══════════════════════════════════════════════════
+//  KPI
+// ═══════════════════════════════════════════════════
+function renderKPIs() {
+  const totalViews = state.articles.reduce((s, a) => s + a.views, 0);
+  const totalClicks = state.articles.reduce((s, a) => s + a.clicks, 0);
+  const avgCtr = totalViews > 0 ? (totalClicks / totalViews * 100) : 0;
+
+  document.getElementById('kpi-avg-ctr').textContent = avgCtr.toFixed(2) + '%';
+  document.getElementById('kpi-articles').textContent = fmtNum(state.articles.length);
+  document.getElementById('kpi-views').textContent = fmtNum(totalViews);
+  document.getElementById('kpi-clicks').textContent = fmtNum(totalClicks);
+
+  const from = state.dateFrom.split('-').reverse().join('.');
+  const to = state.dateTo.split('-').reverse().join('.');
+  document.getElementById('header-period').textContent = `${from} – ${to}`;
+}
+
+// ═══════════════════════════════════════════════════
+//  POPULATE WEEK ARTICLE FILTER
+// ═══════════════════════════════════════════════════
+function populateWeekFilter() {
+  const sel = document.getElementById('filter-article-week');
+  sel.innerHTML = '<option value="all">Все артикулы</option>';
+  state.articles.slice(0, 50).forEach(a => {
+    sel.innerHTML += `<option value="${a.nmId}">${a.nmId}</option>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  SHOW DASHBOARD
+// ═══════════════════════════════════════════════════
+function showDashboard() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard-screen').style.display = 'block';
+
+  renderKPIs();
+  renderArticleChart();
+  renderScatterChart();
+  renderRegionChart();
+  renderPieChart();
+  renderArticleTable();
+  renderRegionTable();
+  populateWeekFilter();
+  renderWeekChart();
+}
+
+function resetToLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard-screen').style.display = 'none';
+  document.getElementById('load-btn').disabled = false;
+  // Destroy all charts
+  Object.keys(CHARTS).forEach(k => { CHARTS[k].destroy(); delete CHARTS[k]; });
+}
+
+// ═══════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  // Re-render charts that may have been hidden (Chart.js sizing issue)
+  setTimeout(() => {
+    if (name === 'articles') { renderArticleChart(); renderScatterChart(); }
+    if (name === 'regions') { renderRegionChart(); renderPieChart(); }
+    if (name === 'weeks') { renderWeekChart(); }
+  }, 50);
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function fmtNum(n) {
+  if (n === undefined || n === null) return '—';
+  return new Intl.NumberFormat('ru-RU').format(Math.round(n));
+}
+
+function setLoading(on, msg) {
+  const el = document.getElementById('loading-overlay');
+  el.style.display = on ? 'flex' : 'none';
+  if (msg) document.getElementById('loading-text').textContent = msg;
+}
+
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
