@@ -490,28 +490,37 @@ async function loadDashboard(){
   document.getElementById('load-btn').disabled=true;
 
   try{
-    // flag=1 → фильтр по дате продажи (не обновления)
-    const path=`/api/v1/supplier/orders?dateFrom=${df}T00:00:00&flag=1`;
+    // flag=0 = фильтр по lastChangeDate — возвращает все актуальные заказы
+    // Именно так работает рабочий дашборд EF/EZFR
+    const path=`/api/v1/supplier/orders?dateFrom=${df}T00:00:00&flag=0`;
     const data=await proxyGet(path);
 
     if(!Array.isArray(data)){
-      showErr('Неожиданный ответ API. Проверьте токен — нужна категория «Статистика».');
+      showErr('Неожиданный ответ API. Проверьте токен (нужен от EF/EZFR кабинета).');
       setLoad(false); document.getElementById('load-btn').disabled=false; return;
     }
 
-    // Фильтруем по dateTo на клиенте, исключаем отменённые заказы
+    setLoad(true,`Получено ${fmtN(data.length)} записей...`,'Фильтруем по периоду...');
+
+    // Фильтруем по дате заказа (поле date) — от dateFrom до dateTo
+    // Исключаем отменённые (isCancel:true)
+    const from=new Date(df+'T00:00:00');
     const toDate=new Date(dt+'T23:59:59');
     const orders=data.filter(s=>{
-      const d=new Date(s.date||s.lastChangeDate||'');
-      return !isNaN(d)&&d<=toDate&&!s.isCancel;
+      if(s.isCancel) return false;
+      // Дата заказа — поле date (не lastChangeDate)
+      const dateField = s.date||'';
+      if(!dateField) return true; // нет даты — включаем
+      const d=new Date(dateField);
+      return !isNaN(d) && d>=from && d<=toDate;
     });
 
     if(!orders.length){
-      showErr(`Нет заказов за период ${df} — ${dt}. Проверьте токен (нужен от EF/EZFR) и период.`);
+      showErr(`Нет заказов за период ${df} — ${dt}. Всего записей от API: ${data.length}. Проверьте период.`);
       setLoad(false); document.getElementById('load-btn').disabled=false; return;
     }
 
-    setLoad(true,'Обрабатываем данные...',`Получено ${fmtN(orders.length)} заказов`);
+    setLoad(true,'Обрабатываем данные...',`Заказов за период: ${fmtN(orders.length)} из ${fmtN(data.length)}`);
     S.sales=orders;
     processOrders();
     setLoad(false);
