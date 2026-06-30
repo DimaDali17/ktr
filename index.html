@@ -241,10 +241,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
 
     <div class="tab-panel" id="tab-regions">
-      <div class="two-col">
-        <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Заказы по регионам</div><div class="panel-sub">Топ-15</div></div></div><div class="chart-wrap" style="height:360px"><canvas id="chart-reg-bar"></canvas></div></div>
-        <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Локальные vs нелокальные</div><div class="panel-sub">Топ-10</div></div></div><div class="chart-wrap" style="height:360px"><canvas id="chart-reg-stack"></canvas></div></div>
-      </div>
+      <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Локальные vs нелокальные по регионам</div><div class="panel-sub">Топ-15 по объёму заказов</div></div></div><div class="chart-wrap" style="height:420px"><canvas id="chart-reg-stack"></canvas></div></div>
       <div class="panel-card">
         <div class="filter-bar"><label>Поиск:</label><input class="search-input" type="text" id="search-region" placeholder="Регион или ФО..." oninput="filterReg()"></div>
         <table class="data-table"><thead><tr><th>Регион</th><th>ФО</th><th>Заказов</th><th>Локальных</th><th>Доля локализации</th><th>Доля от всех</th></tr></thead><tbody id="tbody-regions"></tbody></table>
@@ -253,7 +250,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
 
     <div class="tab-panel" id="tab-fo">
-      <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Сводная по федеральным округам</div><div class="panel-sub">Локализация и КТР по каждому ФО</div></div></div><div class="chart-wrap" style="height:260px"><canvas id="chart-fo-bar"></canvas></div></div>
+      <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Сводная по федеральным округам</div><div class="panel-sub">Локализация и КТР по каждому ФО</div></div></div><div class="chart-wrap" style="height:280px"><canvas id="chart-fo-bar"></canvas></div></div>
       <div class="panel-card"><table class="data-table"><thead><tr><th>Федеральный округ</th><th>Заказов</th><th>Локальных</th><th>Доля локализации</th><th>КТР округа</th><th>Доля от всех</th></tr></thead><tbody id="tbody-fo"></tbody></table>
         <div id="fo-footnote" style="display:none;padding:10px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)"></div>
       </div>
@@ -366,6 +363,28 @@ const KRP_TABLE=[
   [75,79.99,0.00],[80,84.99,0.00],[85,89.99,0.00],[90,94.99,0.00],[95,100,0.00],
 ];
 function getKRP(p){for(const r of KRP_TABLE)if(p>=r[0]&&p<=r[1])return r[2];return 2.50;}
+
+// Сортировка размеров: буквенные (XS,S,M,L,XL,XXL...) по стандартной шкале,
+// числовые диапазоны (42-44, 46-48...) по первому числу, остальное — по алфавиту в конце
+function sizeSortKey(sz){
+  const s=(sz||'').trim().toUpperCase();
+  const LETTER_ORDER={'XXS':1,'XS':2,'S':3,'M':4,'L':5,'XL':6,'XXL':7,'2XL':7,'XXXL':8,'3XL':8,'4XL':9,'5XL':10,'6XL':11};
+  if(LETTER_ORDER[s]!=null)return[0,LETTER_ORDER[s],s];
+  // Диапазон вида "42-44" или "42 44" — берём первое число
+  const rangeMatch=s.match(/^(\d+)[\s\-–](\d+)/);
+  if(rangeMatch)return[1,parseInt(rangeMatch[1],10),s];
+  // Просто число
+  const numMatch=s.match(/^(\d+)$/);
+  if(numMatch)return[1,parseInt(numMatch[1],10),s];
+  // Всё остальное (нестандартные обозначения) — в конец, по алфавиту
+  return[2,0,s];
+}
+function szCmp(a,b){
+  const ka=sizeSortKey(a),kb=sizeSortKey(b);
+  if(ka[0]!==kb[0])return ka[0]-kb[0];
+  if(ka[1]!==kb[1])return ka[1]-kb[1];
+  return ka[2]<kb[2]?-1:ka[2]>kb[2]?1:0;
+}
 function getKTR(p){for(const r of KTR_TABLE)if(p>=r[0]&&p<=r[1])return r[2];return 2.0;}
 function getKTRRow(p){for(const r of KTR_TABLE)if(p>=r[0]&&p<=r[1])return r;return KTR_TABLE[0];}
 
@@ -633,7 +652,7 @@ function processOrders(){
   }
   S.byArt=Object.values(artMap).map(a=>{
     const p=a.orders>0?a.local/a.orders*100:0;
-    const sizes=Object.values(a.sizes).map(s=>{const sp=s.orders>0?s.local/s.orders*100:0;return{...s,localPct:sp,ktr:getKTR(sp)};}).sort((x,y)=>y.orders-x.orders);
+    const sizes=Object.values(a.sizes).map(s=>{const sp=s.orders>0?s.local/s.orders*100:0;return{...s,localPct:sp,ktr:getKTR(sp)};}).sort((x,y)=>szCmp(x.size,y.size));
     return{...a,localPct:p,ktr:getKTR(p),krp:getKRP(p),sizesList:sizes};
   }).sort((a,b)=>b.orders-a.orders);
   S.byReg=Object.values(regMap).map(r=>{const p=r.orders>0?r.local/r.orders*100:0;return{...r,localPct:p};}).sort((a,b)=>b.orders-a.orders);
@@ -754,8 +773,7 @@ function filterArt(){S.artSearch=document.getElementById('search-article').value
 
 function renderRegCharts(){
   const t15=S.byReg.slice(0,15);
-  dc('reg-bar');CHARTS['reg-bar']=new Chart(document.getElementById('chart-reg-bar'),{type:'bar',data:{labels:t15.map(r=>r.region.length>22?r.region.slice(0,20)+'…':r.region),datasets:[{data:t15.map(r=>r.orders),backgroundColor:'#2d2d2a',borderRadius:4,borderSkipped:false}]},options:{...CD,indexAxis:'y',plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>fmtN(ctx.raw)+' заказов'}}},scales:{x:{...CD.scales.x,ticks:{...CD.scales.x.ticks,callback:v=>fmtN(v)}},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,font:{size:10}}}}}});
-  const t10=S.byReg.slice(0,10);dc('reg-stack');CHARTS['reg-stack']=new Chart(document.getElementById('chart-reg-stack'),{type:'bar',data:{labels:t10.map(r=>r.region.length>18?r.region.slice(0,16)+'…':r.region),datasets:[{label:'Локальные',data:t10.map(r=>r.local),backgroundColor:'#4a7c5e',borderRadius:0},{label:'Нелокальные',data:t10.map(r=>r.orders-r.local),backgroundColor:'#ddd8ce',borderRadius:0}]},options:{...CD,indexAxis:'y',plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},color:'#8a8578',boxWidth:12}},tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.raw)}`}}},scales:{x:{...CD.scales.x,stacked:true,ticks:{...CD.scales.x.ticks,callback:v=>fmtN(v)}},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,font:{size:10}}}}}});
+  dc('reg-stack');CHARTS['reg-stack']=new Chart(document.getElementById('chart-reg-stack'),{type:'bar',data:{labels:t15.map(r=>r.region.length>22?r.region.slice(0,20)+'…':r.region),datasets:[{label:'Локальные',data:t15.map(r=>r.local),backgroundColor:'#4a7c5e',borderRadius:0},{label:'Нелокальные',data:t15.map(r=>r.orders-r.local),backgroundColor:'#ddd8ce',borderRadius:0}]},options:{...CD,indexAxis:'y',plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:12},color:'#8a8578',boxWidth:14}},tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.raw)}`}}},scales:{x:{...CD.scales.x,stacked:true,ticks:{...CD.scales.x.ticks,callback:v=>fmtN(v)}},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,font:{size:11}}}}}});
 }
 
 function renderRegTable(){
@@ -770,11 +788,11 @@ function renderRegTable(){
 function filterReg(){S.regSearch=document.getElementById('search-region').value.trim();S.regPage=1;renderRegTable();}
 
 function renderFOTab(){
-  // Только реальные ФО РФ — без СНГ и Неизвестно
-  const foList=S.byFO.filter(f=>f.fo&&f.fo!=='Неизвестно'&&f.fo!=='СНГ');
+  // Только реальные ФО РФ — без СНГ и Неизвестно, отсортированы по объёму
+  const foList=S.byFO.filter(f=>f.fo&&f.fo!=='Неизвестно'&&f.fo!=='СНГ').sort((a,b)=>b.orders-a.orders);
   const cisEntry=S.byFO.find(f=>f.fo==='СНГ');
   const unknownEntry=S.byFO.find(f=>f.fo==='Неизвестно');
-  dc('fo-bar');CHARTS['fo-bar']=new Chart(document.getElementById('chart-fo-bar'),{type:'bar',data:{labels:foList.map(f=>f.fo),datasets:[{label:'Локальные',data:foList.map(f=>f.local),backgroundColor:'#4a7c5e',borderRadius:4},{label:'Нелокальные',data:foList.map(f=>f.orders-f.local),backgroundColor:'#ddd8ce',borderRadius:4}]},options:{...CD,plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},color:'#8a8578',boxWidth:12}}},scales:{x:{...CD.scales.x,stacked:true},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,callback:v=>fmtN(v)}}}}});
+  dc('fo-bar');CHARTS['fo-bar']=new Chart(document.getElementById('chart-fo-bar'),{type:'bar',data:{labels:foList.map(f=>f.fo),datasets:[{label:'Локальные',data:foList.map(f=>f.local),backgroundColor:'#4a7c5e',borderRadius:0},{label:'Нелокальные',data:foList.map(f=>f.orders-f.local),backgroundColor:'#ddd8ce',borderRadius:0}]},options:{...CD,indexAxis:'y',plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:12},color:'#8a8578',boxWidth:14}},tooltip:{...CD.plugins.tooltip,callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtN(ctx.raw)}`}}},scales:{x:{...CD.scales.x,stacked:true,ticks:{...CD.scales.x.ticks,callback:v=>fmtN(v)}},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,font:{size:12}}}}}});
   // Доля считается от заказов РФ (без СНГ), как у WB
   const totRF=foList.reduce((s,f)=>s+f.orders,0);
   const tb=document.getElementById('tbody-fo');tb.innerHTML='';
