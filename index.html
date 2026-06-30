@@ -208,7 +208,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
     <div id="active-filter-bar" style="display:none" class="active-filter-bar"></div>
     <div class="kpi-strip">
-      <div class="kpi-card"><div class="kpi-label">Индекс локализации (ИЛ)</div><div class="kpi-value" id="kpi-il">—</div><div class="kpi-sub">Σ(КТР×заказы)/Σ(заказы) — формула WB с 22.09.2025</div></div>
+      <div class="kpi-card"><div class="kpi-label">КТР среднее (= ИЛ)</div><div class="kpi-value" id="kpi-il">—</div><div class="kpi-sub">Σ(КТР×заказы)/Σ(заказы) — формула WB с 22.09.2025</div></div>
+      <div class="kpi-card"><div class="kpi-label">Артикулов по зонам КТР</div><div class="kpi-value" id="kpi-ktr-dist" style="font-size:15px;line-height:1.5">—</div><div class="kpi-sub">скидка / норма / наценка</div></div>
       <div class="kpi-card"><div class="kpi-label">Индекс распред. продаж (ИРП)</div><div class="kpi-value" id="kpi-irp">—</div><div class="kpi-sub">Σ(КРП×заказы)/Σ(заказы), % от цены — с 23.03.2026</div></div>
       <div class="kpi-card"><div class="kpi-label">Доля локальных заказов</div><div class="kpi-value" id="kpi-local-pct">—</div><div class="kpi-sub">от заказов РФ+Казахстан, без СНГ</div></div>
       <div class="kpi-card"><div class="kpi-label">Артикулов</div><div class="kpi-value" id="kpi-articles">—</div><div class="kpi-sub">с заказами за период</div></div>
@@ -304,8 +305,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="panel-card">
         <div class="ref-block">
           <h3>Что такое КТР и ИЛ</h3>
-          <p><strong>КТР</strong> (Коэффициент территориального распределения) — множитель стоимости логистики. Зависит от доли локальных заказов: больше локальных = ниже КТР = дешевле доставка.</p>
-          <p><strong>ИЛ</strong> (Индекс локализации) — средневзвешенный КТР по всем заказам за 13 недель. Используется WB для расчёта итоговой стоимости.</p>
+          <p><strong>КТР</strong> (Коэффициент территориального распределения) — персональный коэффициент <strong>для каждого артикула</strong>. Зависит от его доли локальных заказов: больше локальных = ниже КТР = дешевле доставка этого артикула. У каждого артикула свой КТР — общего «КТР по кабинету» как отдельного понятия у WB нет.</p>
+          <p><strong>ИЛ</strong> (Индекс локализации) — это и есть <strong>средневзвешенный КТР по всем заказам</strong> кабинета за 13 недель. Поэтому на верхней панели нет отдельной общей карточки «КТР» — карточка «КТР среднее» это и есть ИЛ, та же цифра. КТР по каждому конкретному артикулу смотри на вкладке «По артикулам».</p>
           <div class="formula-box">Стоимость логистики = Тариф × Коэф.логистики × <strong>ИЛ</strong> + Цена × <strong>ИРП</strong><br>ИЛ = Σ(КТР_артикула × Заказов_артикула) / Σ(Заказов)<br>ИРП = 0 при доле локализации ≥ 60%</div>
         </div>
         <div class="ref-block">
@@ -711,6 +712,12 @@ function renderKPIs(){
   const localPct=rfOrdersCount>0?localTotal/rfOrdersCount*100:0;
   const ilEl=document.getElementById('kpi-il');ilEl.textContent=il.toFixed(2);ilEl.style.color=il<1?'var(--green)':il>1?'var(--red)':'var(--text)';
   const irpEl=document.getElementById('kpi-irp');irpEl.textContent=irp.toFixed(2)+'%';irpEl.style.color=irp===0?'var(--green)':irp<1.5?'var(--yellow)':'var(--red)';
+  // Распределение артикулов по зонам КТР: скидка (<1.0) / норма (1.0) / наценка (>1.0)
+  const nLow=S.byArt.filter(a=>a.ktr<1).length;
+  const nNorm=S.byArt.filter(a=>a.ktr===1).length;
+  const nHigh=S.byArt.filter(a=>a.ktr>1).length;
+  document.getElementById('kpi-ktr-dist').innerHTML=
+    `<span style="color:var(--green)">${nLow}</span> / <span style="color:var(--text)">${nNorm}</span> / <span style="color:var(--red)">${nHigh}</span>`;
   document.getElementById('kpi-local-pct').textContent=localPct.toFixed(1)+'%';
   document.getElementById('kpi-articles').textContent=fmtN(S.byArt.length);
   document.getElementById('kpi-orders').textContent=fmtN(S.orders.length);
