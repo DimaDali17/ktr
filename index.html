@@ -209,6 +209,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div id="active-filter-bar" style="display:none" class="active-filter-bar"></div>
     <div class="kpi-strip">
       <div class="kpi-card"><div class="kpi-label">Индекс локализации (ИЛ)</div><div class="kpi-value" id="kpi-il">—</div><div class="kpi-sub">Σ(КТР×заказы)/Σ(заказы) — формула WB с 22.09.2025</div></div>
+      <div class="kpi-card"><div class="kpi-label">Индекс распред. продаж (ИРП)</div><div class="kpi-value" id="kpi-irp">—</div><div class="kpi-sub">Σ(КРП×заказы)/Σ(заказы), % от цены — с 23.03.2026</div></div>
       <div class="kpi-card"><div class="kpi-label">Доля локальных заказов</div><div class="kpi-value" id="kpi-local-pct">—</div><div class="kpi-sub">от заказов РФ+Казахстан, без СНГ</div></div>
       <div class="kpi-card"><div class="kpi-label">Артикулов</div><div class="kpi-value" id="kpi-articles">—</div><div class="kpi-sub">с заказами за период</div></div>
       <div class="kpi-card"><div class="kpi-label">Заказов</div><div class="kpi-value" id="kpi-orders">—</div><div class="kpi-sub">некансельных за период</div></div>
@@ -261,15 +262,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <div class="tab-panel" id="tab-weeks">
       <div class="panel-card">
-        <div class="panel-head"><div><div class="panel-title">Динамика КТР по неделям</div><div class="panel-sub">Средневзвешенный КТР = ИЛ</div></div>
+        <div class="panel-head"><div><div class="panel-title">Динамика КТР по неделям</div><div class="panel-sub" id="wk-period-sub">Средневзвешенный КТР = ИЛ</div></div>
         <select class="filter-select" id="filter-nm-week" onchange="renderWeekCharts()"><option value="all">Все артикулы</option></select></div>
-        <div class="chart-wrap" style="height:260px"><canvas id="chart-wk-ktr"></canvas></div>
+        <div class="chart-wrap" style="height:420px"><canvas id="chart-wk-ktr"></canvas></div>
       </div>
       <div class="two-col">
-        <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Заказы по неделям</div></div></div><div class="chart-wrap" style="height:190px"><canvas id="chart-wk-orders"></canvas></div></div>
-        <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Доля локализации по неделям</div></div></div><div class="chart-wrap" style="height:190px"><canvas id="chart-wk-local"></canvas></div></div>
+        <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Заказы по неделям</div></div></div><div class="chart-wrap" style="height:220px"><canvas id="chart-wk-orders"></canvas></div></div>
+        <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Доля локализации по неделям</div></div></div><div class="chart-wrap" style="height:220px"><canvas id="chart-wk-local"></canvas></div></div>
       </div>
-      <div class="panel-card"><table class="data-table"><thead><tr><th>Неделя</th><th>Заказов</th><th>Локальных</th><th>Доля локализации</th><th>КТР (ИЛ)</th><th>Δ КТР</th></tr></thead><tbody id="tbody-weeks"></tbody></table></div>
+      <div class="panel-card"><table class="data-table"><thead><tr><th>Неделя</th><th>Период</th><th>Заказов</th><th>Локальных</th><th>Доля локализации</th><th>КТР (ИЛ)</th><th>Δ КТР</th></tr></thead><tbody id="tbody-weeks"></tbody></table></div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <div><div class="panel-title">Хитмап: Артикул × Неделя</div><div class="panel-sub">КТР по каждому артикулу в каждой неделе — как в Excel</div></div>
+          <select class="filter-select" id="heatmap-metric" onchange="renderHeatmap()">
+            <option value="ktr">КТР</option>
+            <option value="localPct">Доля локализации %</option>
+          </select>
+        </div>
+        <div class="pivot-scroll" id="heatmap-container"><div class="empty-state">Загружаются данные...</div></div>
+      </div>
     </div>
 
     <div class="tab-panel" id="tab-data">
@@ -307,12 +319,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <p><strong>Остальной СНГ исключён из расчёта</strong> (Армения, Беларусь, Киргизия, Узбекистан и др.) — не входит ни в числитель, ни в знаменатель доли локализации, как в официальной методике WB.</p>
           <p>Источник данных: <code>statistics-api.wildberries.ru/api/v1/supplier/orders?dateFrom=...&flag=0</code></p>
           <p>flag=0 = фильтр по lastChangeDate, возвращает все актуальные заказы. Отменённые (isCancel:true) исключены. Лимит WB: 90 дней.</p>
-          <p style="margin-top:8px"><strong>Возможные причины расхождения с цифрами в кабинете WB:</strong> 1) WB считает «Общий % локальных заказов» (География заказов) по другой методике, чем «Индекс локализации» (Тарифы складов) — это разные показатели, см. предупреждение в самом кабинете WB; 2) период ИЛ у WB — ровно 13 недель, скользящее окно; 3) крупногабаритные товары WB исключает из расчёта ИЛ полностью — в этом дашборде такой фильтр пока не применяется.</p>
         </div>
         <div class="ref-block">
+          <h3>Индекс распределения продаж (ИРП)</h3>
+          <p>Введён с 23 марта 2026 года. Считается по той же логике, что и ИЛ — на основе доли локализации каждого артикула — но по собственной таблице коэффициентов <strong>КРП</strong> (коэффициент распределения продаж), и применяется не к литражу, а к <strong>цене товара до скидки WB</strong>.</p>
+          <div class="formula-box">ИРП = Σ(КРП_артикула × Заказов_артикула) / Σ(Всех заказов)<br><br>При доле локализации ≥ 60% → КРП = 0% (ИРП не влияет на цену)<br>При доле локализации &lt; 60% → КРП от 2.00% до 2.50%</div>
+          <p>ИРП в этом дашборде считается так же, как ИЛ — по заказам из <code>/api/v1/supplier/orders</code>. WB официально исключает из ИРП ряд категорий (КГТ+, СГТ, КБТ, заказы FBS) — эти исключения здесь <strong>не применяются</strong>, так как у нас нет признака модели продаж и габаритов товара в этом эндпоинте.</p>
+        </div>
+        <div class="ref-block">
+          <h3>Таблица КРП (для ИРП, с 23.03.2026)</h3>
+          <div class="ktr-ref-grid" id="krp-ref-grid"></div>
+        </div>
         <div class="ref-block">
           <h3>Таблица КТР (с 23.03.2026)</h3>
           <div class="ktr-ref-grid" id="ktr-ref-grid"></div>
+        </div>
+        <div class="ref-block">
+          <h3>Возможные причины расхождения с кабинетом WB</h3>
+          <ul>
+            <li>WB официально предупреждает: «Общий % локальных заказов» (раздел География заказов) и «Индекс локализации» (раздел Тарифы складов) — это <strong>разные показатели с разной методикой</strong>, их значения у самого WB не совпадают друг с другом.</li>
+            <li>Часовые пояса: API отдаёт даты в UTC, кабинет WB показывает время продавца — на стыке суток заказ может попасть в соседние сутки.</li>
+            <li>Период ИЛ/ИРП у WB — строго 13 недель, скользящее окно с обновлением по понедельникам. Для точного сравнения выставляй точно такой же период.</li>
+            <li>Крупногабаритные и сверхгабаритные товары (КГТ+, СГТ, КБТ) WB исключает из расчёта ИЛ/ИРП полностью — в этом дашборде такого фильтра пока нет.</li>
+            <li>Минимальный порог в 1000 заказов за 13 недель — на меньших объёмах официальный ИЛ WB может быть нерепрезентативным.</li>
+            <li>Команда WB API на форуме разработчиков подтвердила известные случаи расхождения количества заказов между <code>/api/v1/supplier/orders</code> и интерфейсом личного кабинета.</li>
+          </ul>
         </div>
         <div class="ref-block">
           <h3>Справочник: Склад → ФО</h3>
@@ -325,6 +356,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <script>
 const KTR_TABLE=[[0,4.99,2.00,'Критично','#fdecea','#9b3a2a'],[5,9.99,1.80,'Очень высокий','#fde8e4','#9b3a2a'],[10,14.99,1.60,'Высокий','#fde8e4','#9b3a2a'],[15,19.99,1.50,'Высокий','#fde8e4','#9b3a2a'],[20,24.99,1.40,'Повышенный','#fdf0e4','#8a4a1a'],[25,29.99,1.30,'Повышенный','#fdf0e4','#8a4a1a'],[30,34.99,1.20,'Умеренный','#fdf4dc','#8a6a1a'],[35,39.99,1.10,'Умеренный','#fdf4dc','#8a6a1a'],[40,44.99,1.05,'Умеренный','#fdf4dc','#8a6a1a'],[45,54.99,1.00,'Норма','#f5f2ec','#8a8578'],[55,59.99,0.95,'Скидка','#edf4ef','#4a7c5e'],[60,64.99,0.90,'Скидка','#edf4ef','#4a7c5e'],[65,69.99,0.85,'Скидка','#edf4ef','#4a7c5e'],[70,74.99,0.80,'Скидка','#edf4ef','#4a7c5e'],[75,79.99,0.75,'Хорошо','#e0f0e6','#2d6b48'],[80,84.99,0.70,'Хорошо','#e0f0e6','#2d6b48'],[85,89.99,0.65,'Отлично','#d4ecda','#1a5c38'],[90,94.99,0.60,'Отлично','#d4ecda','#1a5c38'],[95,100,0.50,'Максимум','#c8e8d0','#0f4d2e']];
+
+// Таблица КРП (коэффициент распределения продаж) для расчёта ИРП.
+// Действует с 23.03.2026. Источник: официальная инструкция WB «Индекс распределения продаж».
+const KRP_TABLE=[
+  [0,4.99,2.50],[5,9.99,2.45],[10,14.99,2.35],[15,19.99,2.30],[20,24.99,2.25],
+  [25,29.99,2.20],[30,34.99,2.15],[35,39.99,2.10],[40,44.99,2.10],[45,49.99,2.05],
+  [50,54.99,2.05],[55,59.99,2.00],[60,64.99,0.00],[65,69.99,0.00],[70,74.99,0.00],
+  [75,79.99,0.00],[80,84.99,0.00],[85,89.99,0.00],[90,94.99,0.00],[95,100,0.00],
+];
+function getKRP(p){for(const r of KRP_TABLE)if(p>=r[0]&&p<=r[1])return r[2];return 2.50;}
 function getKTR(p){for(const r of KTR_TABLE)if(p>=r[0]&&p<=r[1])return r[2];return 2.0;}
 function getKTRRow(p){for(const r of KTR_TABLE)if(p>=r[0]&&p<=r[1])return r;return KTR_TABLE[0];}
 
@@ -412,7 +453,7 @@ const PAGE=20,CHARTS={};
   const to=new Date(),from=new Date();from.setDate(from.getDate()-90);
   document.getElementById('date-to').value=fmtD(to);document.getElementById('date-from').value=fmtD(from);
   try{const c=JSON.parse(localStorage.getItem('ef_ktr_v4')||'{}');if(c.token)document.getElementById('api-token').value=c.token;if(c.proxy)document.getElementById('proxy-url').value=c.proxy;if(c.ghToken)document.getElementById('gh-token').value=c.ghToken;if(c.ghRepo)document.getElementById('gh-repo').value=c.ghRepo;if(c.artFilter&&c.artFilter.length){S.artFilter=c.artFilter;renderArtChips();}}catch(e){}
-  renderKTRRef();renderWhRef();renderHistoryList();
+  renderKTRRef();renderKRPRef();renderWhRef();renderHistoryList();
   loadNomenclature();
   document.addEventListener('keydown',e=>{
     if(e.target&&e.target.id==='dfp-art-input'){
@@ -593,7 +634,7 @@ function processOrders(){
   S.byArt=Object.values(artMap).map(a=>{
     const p=a.orders>0?a.local/a.orders*100:0;
     const sizes=Object.values(a.sizes).map(s=>{const sp=s.orders>0?s.local/s.orders*100:0;return{...s,localPct:sp,ktr:getKTR(sp)};}).sort((x,y)=>y.orders-x.orders);
-    return{...a,localPct:p,ktr:getKTR(p),sizesList:sizes};
+    return{...a,localPct:p,ktr:getKTR(p),krp:getKRP(p),sizesList:sizes};
   }).sort((a,b)=>b.orders-a.orders);
   S.byReg=Object.values(regMap).map(r=>{const p=r.orders>0?r.local/r.orders*100:0;return{...r,localPct:p};}).sort((a,b)=>b.orders-a.orders);
   S.byFO=Object.values(foMap).map(f=>{const p=f.orders>0?f.local/f.orders*100:0;return{...f,localPct:p,ktr:getKTR(p)};}).sort((a,b)=>b.orders-a.orders);
@@ -602,6 +643,20 @@ function processOrders(){
 
 function getWk(s){if(!s||s.length<10)return'?';const d=new Date(s);if(isNaN(d))return s;const day=d.getDay()||7;d.setDate(d.getDate()-day+1);return d.toISOString().slice(0,10);}
 function fmtWk(s){if(!s||s.length<10)return s;const d=new Date(s);if(isNaN(d))return s;const e=new Date(d);e.setDate(e.getDate()+6);const m=d=>`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;return`${m(d)}–${m(e)}`;}
+// Номер недели по ISO 8601 (понедельник — первый день недели, неделя 1 содержит первый четверг года)
+function isoWeekNum(s){
+  if(!s||s.length<10)return'?';
+  const d=new Date(s+'T00:00:00');
+  if(isNaN(d))return'?';
+  const target=new Date(d.valueOf());
+  const dayNr=(d.getDay()+6)%7; // пн=0 ... вс=6
+  target.setDate(target.getDate()-dayNr+3); // четверг этой недели
+  const firstThursday=new Date(target.getFullYear(),0,4);
+  const firstDayNr=(firstThursday.getDay()+6)%7;
+  firstThursday.setDate(firstThursday.getDate()-firstDayNr+3);
+  const weekNum=1+Math.round((target-firstThursday)/(7*86400000));
+  return weekNum;
+}
 
 function showDash(){
   document.getElementById('login-screen').style.display='none';document.getElementById('dashboard-screen').style.display='block';
@@ -626,14 +681,17 @@ function removeDashFilter(i){S.artFilter.splice(i,1);renderArtChips();savePrefs(
 function clearDashFilter(){S.artFilter=[];renderArtChips();savePrefs();applyArtFilterLive();}
 
 function renderKPIs(){
-  let sumKTR=0,sumO=0;for(const a of S.byArt){sumKTR+=a.ktr*a.orders;sumO+=a.orders;}
+  let sumKTR=0,sumKRP=0,sumO=0;
+  for(const a of S.byArt){sumKTR+=a.ktr*a.orders;sumKRP+=a.krp*a.orders;sumO+=a.orders;}
   const il=sumO>0?sumKTR/sumO:1;
+  const irp=sumO>0?sumKRP/sumO:0;
   // Доля локализации считается от заказов РФ (без СНГ), как у WB на seller.wildberries.ru
   const cisCount=S.orders.filter(o=>normFO(o.oblastOkrugName||'')==='СНГ').length;
   const rfOrdersCount=S.orders.length-cisCount;
   const localTotal=S.byArt.reduce((s,a)=>s+a.local,0);
   const localPct=rfOrdersCount>0?localTotal/rfOrdersCount*100:0;
   const ilEl=document.getElementById('kpi-il');ilEl.textContent=il.toFixed(2);ilEl.style.color=il<1?'var(--green)':il>1?'var(--red)':'var(--text)';
+  const irpEl=document.getElementById('kpi-irp');irpEl.textContent=irp.toFixed(2)+'%';irpEl.style.color=irp===0?'var(--green)':irp<1.5?'var(--yellow)':'var(--red)';
   document.getElementById('kpi-local-pct').textContent=localPct.toFixed(1)+'%';
   document.getElementById('kpi-articles').textContent=fmtN(S.byArt.length);
   document.getElementById('kpi-orders').textContent=fmtN(S.orders.length);
@@ -749,14 +807,101 @@ function populateWkFilter(){const sel=document.getElementById('filter-nm-week');
 function renderWeekCharts(){
   const nm=document.getElementById('filter-nm-week').value;
   let wks=nm==='all'?S.byWeek:(()=>{const a=S.byArt.find(x=>x.art===nm);return a?Object.entries(a.weeks).map(([k,v])=>{const p=v.orders>0?v.local/v.orders*100:0;return{week:k,orders:v.orders,local:v.local,localPct:p,ktr:getKTR(p)};}).sort((a,b)=>a.week.localeCompare(b.week)):[];})();
-  const lbl=wks.map(w=>fmtWk(w.week));
-  dc('wk-ktr');CHARTS['wk-ktr']=new Chart(document.getElementById('chart-wk-ktr'),{type:'line',data:{labels:lbl,datasets:[{label:'КТР',data:wks.map(w=>+w.ktr.toFixed(2)),borderColor:'#2d2d2a',backgroundColor:'#2d2d2a15',fill:true,tension:.3,pointRadius:4,borderWidth:2,pointBackgroundColor:'#2d2d2a'},{label:'Цель 1.0',data:wks.map(()=>1),borderColor:'#8a8578',borderDash:[5,5],borderWidth:1,pointRadius:0,fill:false}]},options:{...CD,plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},color:'#8a8578',boxWidth:12}}},scales:{x:CD.scales.x,y:{...CD.scales.y,min:.4,max:2.1}}}});
-  dc('wk-orders');CHARTS['wk-orders']=new Chart(document.getElementById('chart-wk-orders'),{type:'bar',data:{labels:lbl,datasets:[{data:wks.map(w=>w.orders),backgroundColor:'#4a7c5ebb',borderRadius:4}]},options:{...CD,scales:{x:CD.scales.x,y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>fmtN(v)}}}}});
-  dc('wk-local');CHARTS['wk-local']=new Chart(document.getElementById('chart-wk-local'),{type:'line',data:{labels:lbl,datasets:[{data:wks.map(w=>+w.localPct.toFixed(1)),borderColor:'#4a7c5e',backgroundColor:'#4a7c5e15',fill:true,tension:.3,pointRadius:4,borderWidth:2,pointBackgroundColor:'#4a7c5e'}]},options:{...CD,scales:{x:CD.scales.x,y:{...CD.scales.y,min:0,max:100,ticks:{...CD.scales.y.ticks,callback:v=>v+'%'}}}}});
+  // Главная подпись — номер недели ISO (как в Excel: 24, 25, 26...)
+  const lbl=wks.map(w=>String(isoWeekNum(w.week)));
+  const sub=document.getElementById('wk-period-sub');
+  if(sub&&wks.length){
+    sub.textContent=`Средневзвешенный КТР = ИЛ · Недели ${isoWeekNum(wks[0].week)}–${isoWeekNum(wks[wks.length-1].week)} · ${fmtWk(wks[0].week).split('–')[0]} — ${fmtWk(wks[wks.length-1].week).split('–')[1]||''}`;
+  }
+  // Доп. плагин Chart.js — рисует диапазон дат серым под номером недели
+  const weekDatesPlugin={
+    id:'weekDatesPlugin',
+    afterDraw(chart){
+      const {ctx,scales:{x}}=chart;
+      ctx.save();
+      ctx.font='9px Inter, sans-serif';
+      ctx.fillStyle='#a8a298';
+      ctx.textAlign='center';
+      wks.forEach((w,i)=>{
+        const xPos=x.getPixelForValue(i);
+        const y=x.bottom+26;
+        ctx.fillText(fmtWk(w.week),xPos,y);
+      });
+      ctx.restore();
+    }
+  };
+  dc('wk-ktr');CHARTS['wk-ktr']=new Chart(document.getElementById('chart-wk-ktr'),{
+    type:'line',
+    data:{labels:lbl,datasets:[
+      {label:'КТР',data:wks.map(w=>+w.ktr.toFixed(2)),borderColor:'#2d2d2a',backgroundColor:'#2d2d2a15',fill:true,tension:.3,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,pointBackgroundColor:'#2d2d2a'},
+      {label:'Цель 1.0',data:wks.map(()=>1),borderColor:'#8a8578',borderDash:[5,5],borderWidth:1,pointRadius:0,fill:false}
+    ]},
+    options:{
+      ...CD,
+      layout:{padding:{bottom:18}},
+      plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:12},color:'#8a8578',boxWidth:14}},
+        tooltip:{...CD.plugins.tooltip,callbacks:{
+          title:items=>'Неделя '+items[0].label,
+          label:ctx=>ctx.dataset.label==='КТР'?`КТР: ${ctx.raw}`:null
+        }}},
+      scales:{
+        x:{...CD.scales.x,ticks:{...CD.scales.x.ticks,font:{family:'Unbounded',size:13,weight:'600'},color:'#2d2d2a'}},
+        y:{...CD.scales.y,min:.4,max:2.1,ticks:{...CD.scales.y.ticks,font:{size:12}}}
+      }
+    },
+    plugins:[weekDatesPlugin]
+  });
+  dc('wk-orders');CHARTS['wk-orders']=new Chart(document.getElementById('chart-wk-orders'),{type:'bar',data:{labels:lbl,datasets:[{data:wks.map(w=>w.orders),backgroundColor:'#4a7c5ebb',borderRadius:4}]},options:{...CD,plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{title:items=>'Неделя '+items[0].label,label:ctx=>fmtN(ctx.raw)+' заказов'}}},scales:{x:{...CD.scales.x,ticks:{...CD.scales.x.ticks,font:{family:'Unbounded',size:11,weight:'600'}}},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>fmtN(v)}}}}});
+  dc('wk-local');CHARTS['wk-local']=new Chart(document.getElementById('chart-wk-local'),{type:'line',data:{labels:lbl,datasets:[{data:wks.map(w=>+w.localPct.toFixed(1)),borderColor:'#4a7c5e',backgroundColor:'#4a7c5e15',fill:true,tension:.3,pointRadius:4,borderWidth:2,pointBackgroundColor:'#4a7c5e'}]},options:{...CD,plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{title:items=>'Неделя '+items[0].label,label:ctx=>ctx.raw+'% локальных'}}},scales:{x:{...CD.scales.x,ticks:{...CD.scales.x.ticks,font:{family:'Unbounded',size:11,weight:'600'}}},y:{...CD.scales.y,min:0,max:100,ticks:{...CD.scales.y.ticks,callback:v=>v+'%'}}}}});
   const tb=document.getElementById('tbody-weeks');tb.innerHTML='';
   wks.forEach((w,i)=>{const prev=i>0?wks[i-1].ktr:null;const d=prev!==null?w.ktr-prev:null;const dh=d===null?'<span class="badge badge-neutral">—</span>':Math.abs(d)<.001?'<span class="badge badge-neutral">0</span>':d<0?`<span class="badge badge-green">${d.toFixed(2)}</span>`:`<span class="badge badge-red">+${d.toFixed(2)}</span>`;const row=getKTRRow(w.localPct);
-    tb.innerHTML+=`<tr><td>${fmtWk(w.week)}</td><td>${fmtN(w.orders)}</td><td>${fmtN(w.local)}</td><td>${w.localPct.toFixed(1)}%</td><td><span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;background:${row[4]};color:${row[5]};padding:2px 8px;border-radius:5px">${w.ktr.toFixed(2)}</span></td><td>${dh}</td></tr>`;
+    tb.innerHTML+=`<tr><td><strong>Нед. ${isoWeekNum(w.week)}</strong></td><td style="font-size:11px;color:var(--muted)">${fmtWk(w.week)}</td><td>${fmtN(w.orders)}</td><td>${fmtN(w.local)}</td><td>${w.localPct.toFixed(1)}%</td><td><span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;background:${row[4]};color:${row[5]};padding:2px 8px;border-radius:5px">${w.ktr.toFixed(2)}</span></td><td>${dh}</td></tr>`;
   });
+  renderHeatmap();
+}
+
+// ── Хитмап Артикул × Неделя (как в Excel: зелёный/красный по значению) ──
+function renderHeatmap(){
+  const container=document.getElementById('heatmap-container');
+  if(!container)return;
+  const metric=document.getElementById('heatmap-metric')?.value||'ktr';
+  if(!S.byWeek.length){container.innerHTML='<div class="empty-state">Нет данных</div>';return;}
+
+  const weekKeys=S.byWeek.map(w=>w.week);
+  const topArts=S.byArt.slice(0,40); // топ-40 по объёму, чтобы не перегружать таблицу
+
+  let html='<table class="pivot-table"><thead><tr><th class="row-h">Артикул</th>';
+  weekKeys.forEach(wk=>{
+    html+=`<th><div>${isoWeekNum(wk)}</div><div style="font-size:8px;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">${fmtWk(wk)}</div></th>`;
+  });
+  html+='</tr></thead><tbody>';
+
+  for(const a of topArts){
+    html+=`<tr><td class="row-label" title="${a.art}">${a.art.length>26?a.art.slice(0,24)+'…':a.art}</td>`;
+    for(const wk of weekKeys){
+      const wdata=a.weeks[wk];
+      if(!wdata||wdata.orders===0){html+='<td style="color:var(--muted)">—</td>';continue;}
+      const p=wdata.orders>0?wdata.local/wdata.orders*100:0;
+      const ktr=getKTR(p);
+      let val,bg,fg;
+      if(metric==='ktr'){
+        val=ktr.toFixed(2);
+        // Зелёный при низком КТР (хорошо), красный при высоком (плохо) — как в Excel-скрине
+        if(ktr<=1.0){bg='#d4ecda';fg='#1a5c38';}
+        else if(ktr<=1.3){bg='#fdf4dc';fg='#8a6a1a';}
+        else{bg='#fdecea';fg='#9b3a2a';}
+      }else{
+        val=p.toFixed(0)+'%';
+        if(p>=60){bg='#d4ecda';fg='#1a5c38';}
+        else if(p>=30){bg='#fdf4dc';fg='#8a6a1a';}
+        else{bg='#fdecea';fg='#9b3a2a';}
+      }
+      html+=`<td style="background:${bg};color:${fg};font-weight:600">${val}</td>`;
+    }
+    html+='</tr>';
+  }
+  html+='</tbody></table>';
+  container.innerHTML=html;
 }
 
 function renderPivot(){
@@ -818,6 +963,15 @@ function exportRawCSV(){
 function downloadCSV(content,filename){const blob=new Blob(['\uFEFF'+content],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();}
 
 function renderKTRRef(){document.getElementById('ktr-ref-grid').innerHTML=KTR_TABLE.map(r=>`<div class="ktr-ref-cell" style="background:${r[4]};border:1px solid ${r[5]}33"><div class="ktr-range">${r[0]}–${r[1]}%</div><div class="ktr-num" style="color:${r[5]}">${r[2].toFixed(2)}</div><div style="font-size:10px;color:${r[5]};margin-top:2px">${r[3]}</div></div>`).join('');}
+function renderKRPRef(){
+  const el=document.getElementById('krp-ref-grid');if(!el)return;
+  el.innerHTML=KRP_TABLE.map(r=>{
+    const isZero=r[2]===0;
+    const bg=isZero?'#d4ecda':r[2]>=2.3?'#fdecea':'#fdf4dc';
+    const fg=isZero?'#1a5c38':r[2]>=2.3?'#9b3a2a':'#8a6a1a';
+    return`<div class="ktr-ref-cell" style="background:${bg};border:1px solid ${fg}33"><div class="ktr-range">${r[0]}–${r[1]}%</div><div class="ktr-num" style="color:${fg}">${r[2].toFixed(2)}%</div></div>`;
+  }).join('');
+}
 function renderWhRef(){const rows=Object.entries(WH_FO).map(([wh,fo])=>`<tr><td style="padding:4px 8px;font-size:12px;border-bottom:1px solid var(--border)">${wh}</td><td style="padding:4px 8px;font-size:12px;border-bottom:1px solid var(--border);font-weight:600">${fo}</td></tr>`).join('');document.getElementById('wh-ref-table').innerHTML=`<table style="border-collapse:collapse"><thead><tr><th style="padding:6px 8px;font-size:10px;text-align:left;background:var(--card2);border-bottom:1px solid var(--border)">Склад</th><th style="padding:6px 8px;font-size:10px;text-align:left;background:var(--card2);border-bottom:1px solid var(--border)">ФО</th></tr></thead><tbody>${rows}</tbody></table>`;}
 
 function switchTab(name,btn){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById('tab-'+name).classList.add('active');setTimeout(()=>{if(name==='articles')renderArtCharts();if(name==='regions')renderRegCharts();if(name==='fo')renderFOTab();if(name==='weeks')renderWeekCharts();if(name==='data'){renderPivot();renderRawTable();}},50);}
