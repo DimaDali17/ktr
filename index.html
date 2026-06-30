@@ -104,6 +104,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .btn-export{padding:5px 12px;background:var(--green-bg);border:1px solid #c0dbc9;border-radius:7px;font-size:11px;font-weight:600;color:var(--green);cursor:pointer;font-family:'Inter',sans-serif}
 .btn-export:hover{background:#d4ecda}
 .fo-ktr-cell{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:600;padding:3px 8px;border-radius:6px;display:inline-block}
+.dash-filter-panel{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.dfp-group{display:flex;flex-direction:column;gap:5px}
+.dfp-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dfp-date{padding:7px 10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);outline:none}
+.dfp-date:focus{border-color:var(--accent)}
+.dfp-art-wrap{display:flex;flex-direction:column;gap:5px;flex:1;min-width:220px}
+.dfp-art-input{padding:7px 10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);outline:none;width:100%}
+.dfp-art-input:focus{border-color:var(--accent)}
+.dfp-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.dfp-btn{padding:7px 14px;background:var(--accent);color:var(--card);border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.dfp-btn:hover{opacity:.88}
+.dfp-reset{padding:7px 12px;background:transparent;border:1px solid var(--border);border-radius:8px;font-size:11px;cursor:pointer;color:var(--muted);font-family:'Inter',sans-serif}
+.dfp-reset:hover{background:var(--border)}
+.size-row td{background:var(--card2);font-size:12px}
+.size-row td.row-label{padding-left:32px;color:var(--muted)}
+.expand-tog{cursor:pointer;display:inline-block;width:14px;color:var(--muted);font-size:10px}
 </style>
 </head>
 <body>
@@ -129,12 +145,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="field-group" style="margin-bottom:0"><label class="field-label">Период по</label><input class="field-input" type="date" id="date-to"></div>
   </div>
   <div class="login-section">
-    <div class="login-section-title">Фильтр по артикулу (необязательно)</div>
-    <input class="field-input" type="text" id="art-filter-input" placeholder="Введи supplierArticle и нажми Enter..." autocomplete="off">
-    <div class="art-chips" id="art-chips"></div>
-    <p class="field-hint" style="margin-top:5px">Загружаются все данные — фильтр применяется без перезагрузки.</p>
-  </div>
-  <div class="login-section">
     <div class="login-section-title">История загрузок (localStorage)</div>
     <div class="history-list" id="history-list"></div>
     <p class="field-hint" style="margin-top:6px">До 6 периодов. Нажми на период — загрузится без запроса к API.</p>
@@ -142,7 +152,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div class="login-section">
     <div class="login-section-title">GitHub — долговременное хранение</div>
     <div class="field-group"><label class="field-label">GitHub Token (repo scope)</label><input class="field-input" type="password" id="gh-token" placeholder="ghp_..."></div>
-    <div class="field-group"><label class="field-label">Репозиторий (user/repo)</label><input class="field-input" type="text" id="gh-repo" placeholder="dimadali17/ktr"></div>
+    <div class="field-group"><label class="field-label">Репозиторий (user/repo)</label><input class="field-input" type="text" id="gh-repo" value="DimaDali17/ktr"></div>
     <p class="field-hint">Каждая загрузка коммитится как <code>data/ktr-ДАТА.json</code>. Токен с правом <strong>repo</strong> → <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></p>
   </div>
   <button class="btn-primary" id="load-btn" onclick="loadDashboard()">Загрузить дашборд</button>
@@ -162,11 +172,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <span id="header-period">—</span>
       <span id="header-count" style="font-weight:600;color:var(--text)"></span>
       <span id="header-filter-badge"></span>
-      <button class="btn-secondary" id="btn-save-gh" onclick="saveToGitHub()" style="display:none">💾 GitHub</button>
+      <button class="btn-secondary" id="btn-save-gh" onclick="saveToGitHub()" style="display:none" title="Сохраняет текущий отфильтрованный срез данных в GitHub-репозиторий (data/ktr-ДАТЫ.json). Срабатывает и автоматически после загрузки — жми вручную если хочешь сохранить именно суженный/отфильтрованный период отдельно.">💾 GitHub</button>
       <button class="btn-secondary" onclick="resetToLogin()">← Назад</button>
     </div>
   </header>
   <div class="dash-body">
+    <div class="dash-filter-panel">
+      <div class="dfp-group">
+        <span class="dfp-label">Период с</span>
+        <input class="dfp-date" type="date" id="dfp-date-from">
+      </div>
+      <div class="dfp-group">
+        <span class="dfp-label">Период по</span>
+        <input class="dfp-date" type="date" id="dfp-date-to">
+      </div>
+      <div class="dfp-art-wrap">
+        <span class="dfp-label">Фильтр по артикулу</span>
+        <input class="dfp-art-input" type="text" id="dfp-art-input" placeholder="Введи supplierArticle и нажми Enter...">
+        <div class="dfp-chips" id="dfp-art-chips"></div>
+      </div>
+      <button class="dfp-btn" onclick="applyDashFilters()">Применить</button>
+      <button class="dfp-reset" onclick="resetDashFilters()">Сбросить</button>
+    </div>
     <div id="active-filter-bar" style="display:none" class="active-filter-bar"></div>
     <div class="kpi-strip">
       <div class="kpi-card"><div class="kpi-label">Индекс локализации (ИЛ)</div><div class="kpi-value" id="kpi-il">—</div><div class="kpi-sub">средневзвешенный КТР</div></div>
@@ -287,7 +314,7 @@ const WH_FO={'Коледино':'ЦФО','Подольск':'ЦФО','Элект
 function getWhFO(wh){if(!wh)return null;for(const[k,v]of Object.entries(WH_FO))if(wh.toLowerCase().includes(k.toLowerCase()))return v;if(/москв|московск/i.test(wh))return'ЦФО';return null;}
 function normFO(s){if(!s)return null;const l=s.toLowerCase();if(l.includes('централь'))return'ЦФО';if(l.includes('северо-зап'))return'СЗФО';if(l.includes('южн')||l.includes('северо-кавк')||l.includes('скфо'))return'ЮФО';if(l.includes('приволж'))return'ПФО';if(l.includes('уральск'))return'УФО';if(l.includes('сибирск'))return'СФО';if(l.includes('дальневост'))return'ДВФО';if(l==='цфо')return'ЦФО';if(l==='сзфо')return'СЗФО';if(l==='юфо'||l==='скфо')return'ЮФО';if(l==='пфо')return'ПФО';if(l==='уфо')return'УФО';if(l==='сфо')return'СФО';if(l==='двфо')return'ДВФО';return s;}
 
-let S={token:'',proxy:'https://ktr.ooo6311ooo.workers.dev',dateFrom:'',dateTo:'',artFilter:[],allOrders:[],orders:[],byArt:[],byReg:[],byFO:[],byWeek:[],artPage:1,regPage:1,rawPage:1,artSearch:'',regSearch:'',rawSearch:'',artSort:'orders-desc',ktrFilter:'all',ghToken:'',ghRepo:''};
+let S={token:'',proxy:'https://ktr.ooo6311ooo.workers.dev',dateFrom:'',dateTo:'',viewFrom:'',viewTo:'',artFilter:[],allOrders:[],orders:[],byArt:[],byReg:[],byFO:[],byWeek:[],artPage:1,regPage:1,rawPage:1,artSearch:'',regSearch:'',rawSearch:'',artSort:'orders-desc',ktrFilter:'all',ghToken:'',ghRepo:'',expandedArts:new Set()};
 const PAGE=20,CHARTS={};
 
 (function init(){
@@ -295,20 +322,28 @@ const PAGE=20,CHARTS={};
   document.getElementById('date-to').value=fmtD(to);document.getElementById('date-from').value=fmtD(from);
   try{const c=JSON.parse(localStorage.getItem('ef_ktr_v4')||'{}');if(c.token)document.getElementById('api-token').value=c.token;if(c.proxy)document.getElementById('proxy-url').value=c.proxy;if(c.ghToken)document.getElementById('gh-token').value=c.ghToken;if(c.ghRepo)document.getElementById('gh-repo').value=c.ghRepo;if(c.artFilter&&c.artFilter.length){S.artFilter=c.artFilter;renderArtChips();}}catch(e){}
   renderKTRRef();renderWhRef();renderHistoryList();
-  document.getElementById('art-filter-input').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();if(v&&!S.artFilter.includes(v)){S.artFilter.push(v);renderArtChips();savePrefs();}e.target.value='';}});
+  document.addEventListener('keydown',e=>{
+    if(e.target&&e.target.id==='dfp-art-input'&&e.key==='Enter'){
+      const v=e.target.value.trim();
+      if(v&&!S.artFilter.includes(v)){S.artFilter.push(v);renderArtChips();savePrefs();e.target.value='';if(S.allOrders.length)applyArtFilterLive();}
+    }
+  });
 })();
 
 function fmtD(d){return d.toISOString().slice(0,10);}
 function savePrefs(){try{localStorage.setItem('ef_ktr_v4',JSON.stringify({token:document.getElementById('api-token').value.trim(),proxy:document.getElementById('proxy-url').value.trim(),ghToken:document.getElementById('gh-token').value.trim(),ghRepo:document.getElementById('gh-repo').value.trim(),artFilter:S.artFilter}));}catch(e){}}
-function renderArtChips(){document.getElementById('art-chips').innerHTML=S.artFilter.map((a,i)=>`<span class="art-chip">${a}<span class="cx" onclick="removeArtFilter(${i})">×</span></span>`).join('');}
-function removeArtFilter(i){S.artFilter.splice(i,1);renderArtChips();savePrefs();}
+function renderArtChips(){
+  const el=document.getElementById('dfp-art-chips');
+  if(el)el.innerHTML=S.artFilter.map((a,i)=>`<span class="art-chip">${a}<span class="cx" onclick="removeArtFilter(${i})">×</span></span>`).join('');
+}
+function removeArtFilter(i){S.artFilter.splice(i,1);renderArtChips();savePrefs();if(S.allOrders.length)applyDashFilters();}
 
 const HIST_KEY='ef_ktr_history';
 function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];}}
 function saveHistory(h){try{localStorage.setItem(HIST_KEY,JSON.stringify(h));}catch(e){}}
 function addToHistory(df,dt,orders){const h=getHistory();const key=df+'__'+dt;const idx=h.findIndex(x=>x.key===key);const entry={key,dateFrom:df,dateTo:dt,count:orders.length,savedAt:new Date().toISOString(),orders};if(idx>=0)h[idx]=entry;else h.unshift(entry);if(h.length>6)h.splice(6);saveHistory(h);renderHistoryList();}
 function renderHistoryList(){const h=getHistory();const el=document.getElementById('history-list');if(!h.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);padding:4px 0">Нет сохранённых загрузок</div>';return;}el.innerHTML=h.map((item,i)=>`<div class="history-item" onclick="loadFromHistory(${i})"><div><div class="hi-period">${item.dateFrom} — ${item.dateTo}</div><div class="hi-meta">${fmtN(item.count)} заказов · ${new Date(item.savedAt).toLocaleDateString('ru')}</div></div><button class="hi-del" onclick="event.stopPropagation();deleteHistory(${i})">×</button></div>`).join('');}
-function loadFromHistory(i){const h=getHistory();const item=h[i];if(!item)return;document.getElementById('date-from').value=item.dateFrom;document.getElementById('date-to').value=item.dateTo;S.dateFrom=item.dateFrom;S.dateTo=item.dateTo;S.token=document.getElementById('api-token').value.trim();S.proxy=document.getElementById('proxy-url').value.trim();processAndShow(item.orders);}
+function loadFromHistory(i){const h=getHistory();const item=h[i];if(!item)return;document.getElementById('date-from').value=item.dateFrom;document.getElementById('date-to').value=item.dateTo;S.dateFrom=item.dateFrom;S.dateTo=item.dateTo;S.viewFrom=item.dateFrom;S.viewTo=item.dateTo;S.token=document.getElementById('api-token').value.trim();S.proxy=document.getElementById('proxy-url').value.trim();processAndShow(item.orders);}
 function deleteHistory(i){const h=getHistory();h.splice(i,1);saveHistory(h);renderHistoryList();}
 
 async function saveToGitHub(){
@@ -361,13 +396,44 @@ async function loadDashboard(){
 
 function processAndShow(allOrders){
   S.allOrders=allOrders;
-  S.orders=S.artFilter.length?allOrders.filter(o=>S.artFilter.some(f=>(o.supplierArticle||'').toLowerCase().includes(f.toLowerCase()))):allOrders;
+  S.viewFrom=S.dateFrom;S.viewTo=S.dateTo;
+  recomputeOrders();
   processOrders();setLoad(false);showDash();
 }
 
+// Применяет artFilter + viewFrom/viewTo поверх allOrders без обращения к API
+function recomputeOrders(){
+  let d=S.allOrders;
+  if(S.viewFrom){const from=new Date(S.viewFrom+'T00:00:00');d=d.filter(o=>{const dt=new Date(o.date||'');return !isNaN(dt)&&dt>=from;});}
+  if(S.viewTo){const to=new Date(S.viewTo+'T23:59:59');d=d.filter(o=>{const dt=new Date(o.date||'');return !isNaN(dt)&&dt<=to;});}
+  if(S.artFilter.length)d=d.filter(o=>S.artFilter.some(f=>(o.supplierArticle||'').toLowerCase().includes(f.toLowerCase())));
+  S.orders=d;
+}
+
 function applyArtFilterLive(){
-  S.orders=S.artFilter.length?S.allOrders.filter(o=>S.artFilter.some(f=>(o.supplierArticle||'').toLowerCase().includes(f.toLowerCase()))):S.allOrders;
+  recomputeOrders();
   processOrders();renderKPIs();renderArtCharts();renderArtTable();renderRegCharts();renderRegTable();renderFOTab();populateWkFilter();renderWeekCharts();renderPivot();renderRawTable();updateActiveFilterBar();
+}
+
+// Кнопка «Применить» в панели фильтров дашборда — артикул + сужение дат, БЕЗ запроса к API
+function applyDashFilters(){
+  const vf=document.getElementById('dfp-date-from').value;
+  const vt=document.getElementById('dfp-date-to').value;
+  S.viewFrom=vf||S.dateFrom;
+  S.viewTo=vt||S.dateTo;
+  const artVal=document.getElementById('dfp-art-input').value.trim();
+  if(artVal&&!S.artFilter.includes(artVal)){S.artFilter.push(artVal);document.getElementById('dfp-art-input').value='';}
+  renderArtChips();savePrefs();
+  applyArtFilterLive();
+}
+
+function resetDashFilters(){
+  S.viewFrom=S.dateFrom;S.viewTo=S.dateTo;S.artFilter=[];
+  document.getElementById('dfp-date-from').value=S.dateFrom;
+  document.getElementById('dfp-date-to').value=S.dateTo;
+  document.getElementById('dfp-art-input').value='';
+  renderArtChips();savePrefs();
+  applyArtFilterLive();
 }
 
 function processOrders(){
@@ -378,11 +444,14 @@ function processOrders(){
     const isLocal=!!(buyerFO&&whFO&&normFO(whFO)===normFO(buyerFO));
     const dateStr=(o.date||'').slice(0,10),wk=getWk(dateStr);
     const region=o.regionName||o.oblastOkrugName||'Неизвестно';
-    if(!artMap[art])artMap[art]={art,nmId,orders:0,local:0,weeks:{},foMap:{}};
+    const size=o.techSize||'—';
+    if(!artMap[art])artMap[art]={art,nmId,orders:0,local:0,weeks:{},foMap:{},sizes:{}};
     artMap[art].orders++;if(isLocal)artMap[art].local++;
     if(!artMap[art].weeks[wk])artMap[art].weeks[wk]={orders:0,local:0};
     artMap[art].weeks[wk].orders++;if(isLocal)artMap[art].weeks[wk].local++;
     const bFO=buyerFO||'—';artMap[art].foMap[bFO]=(artMap[art].foMap[bFO]||0)+1;
+    if(!artMap[art].sizes[size])artMap[art].sizes[size]={size,orders:0,local:0};
+    artMap[art].sizes[size].orders++;if(isLocal)artMap[art].sizes[size].local++;
     if(!regMap[region])regMap[region]={region,fo:buyerFO||'—',orders:0,local:0};
     regMap[region].orders++;if(isLocal)regMap[region].local++;
     const foKey=buyerFO||'Неизвестно';if(!foMap[foKey])foMap[foKey]={fo:foKey,orders:0,local:0};
@@ -390,7 +459,11 @@ function processOrders(){
     if(!wkMap[wk])wkMap[wk]={week:wk,orders:0,local:0};
     wkMap[wk].orders++;if(isLocal)wkMap[wk].local++;
   }
-  S.byArt=Object.values(artMap).map(a=>{const p=a.orders>0?a.local/a.orders*100:0;return{...a,localPct:p,ktr:getKTR(p)};}).sort((a,b)=>b.orders-a.orders);
+  S.byArt=Object.values(artMap).map(a=>{
+    const p=a.orders>0?a.local/a.orders*100:0;
+    const sizes=Object.values(a.sizes).map(s=>{const sp=s.orders>0?s.local/s.orders*100:0;return{...s,localPct:sp,ktr:getKTR(sp)};}).sort((x,y)=>y.orders-x.orders);
+    return{...a,localPct:p,ktr:getKTR(p),sizesList:sizes};
+  }).sort((a,b)=>b.orders-a.orders);
   S.byReg=Object.values(regMap).map(r=>{const p=r.orders>0?r.local/r.orders*100:0;return{...r,localPct:p};}).sort((a,b)=>b.orders-a.orders);
   S.byFO=Object.values(foMap).map(f=>{const p=f.orders>0?f.local/f.orders*100:0;return{...f,localPct:p,ktr:getKTR(p)};}).sort((a,b)=>b.orders-a.orders);
   S.byWeek=Object.entries(wkMap).map(([k,v])=>{const p=v.orders>0?v.local/v.orders*100:0;return{week:k,orders:v.orders,local:v.local,localPct:p,ktr:getKTR(p)};}).sort((a,b)=>a.week.localeCompare(b.week));
@@ -402,6 +475,11 @@ function fmtWk(s){if(!s||s.length<10)return s;const d=new Date(s);if(isNaN(d))re
 function showDash(){
   document.getElementById('login-screen').style.display='none';document.getElementById('dashboard-screen').style.display='block';
   document.getElementById('btn-save-gh').style.display=(S.ghToken&&S.ghRepo)?'block':'none';
+  document.getElementById('dfp-date-from').value=S.viewFrom||S.dateFrom;
+  document.getElementById('dfp-date-from').min=S.dateFrom;document.getElementById('dfp-date-from').max=S.dateTo;
+  document.getElementById('dfp-date-to').value=S.viewTo||S.dateTo;
+  document.getElementById('dfp-date-to').min=S.dateFrom;document.getElementById('dfp-date-to').max=S.dateTo;
+  renderArtChips();
   updateActiveFilterBar();renderKPIs();renderArtCharts();renderArtTable();renderRegCharts();renderRegTable();renderFOTab();populateWkFilter();renderWeekCharts();renderPivot();renderRawTable();
 }
 
@@ -424,8 +502,10 @@ function renderKPIs(){
   document.getElementById('kpi-articles').textContent=fmtN(S.byArt.length);
   document.getElementById('kpi-orders').textContent=fmtN(S.orders.length);
   document.getElementById('kpi-fo').textContent=fmtN(new Set(S.byFO.map(f=>f.fo).filter(Boolean)).size);
-  const f=S.dateFrom.split('-').reverse().join('.'),t=S.dateTo.split('-').reverse().join('.');
-  document.getElementById('header-period').textContent=`${f} – ${t}`;
+  const vf=S.viewFrom||S.dateFrom,vt=S.viewTo||S.dateTo;
+  const f=vf.split('-').reverse().join('.'),t=vt.split('-').reverse().join('.');
+  const isNarrowed=(vf!==S.dateFrom||vt!==S.dateTo);
+  document.getElementById('header-period').textContent=`${f} – ${t}`+(isNarrowed?' (сужено)':'');
   document.getElementById('header-count').textContent=fmtN(S.orders.length)+' заказов';
 }
 
@@ -446,11 +526,22 @@ function renderArtTable(){
   const total=d.length,page=S.artPage,sl=d.slice((page-1)*PAGE,page*PAGE);
   const tb=document.getElementById('tbody-articles');tb.innerHTML='';
   if(!sl.length){tb.innerHTML='<tr><td colspan="6"><div class="empty-state">Нет данных</div></td></tr>';return;}
-  sl.forEach(a=>{const row=getKTRRow(a.localPct);const bc=a.localPct>=60?'#4a7c5e':a.localPct>=40?'#8a6a1a':'#9b3a2a';
-    tb.innerHTML+=`<tr><td><div class="art-cell"><div class="art-text">${a.art}</div><div class="art-nmid">${a.nmId}</div></div></td><td>${fmtN(a.orders)}</td><td>${fmtN(a.local)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(a.localPct)}%;background:${bc}"></div></div><span class="bar-val">${a.localPct.toFixed(1)}%</span></div></td><td><span style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;background:${row[4]};color:${row[5]};padding:3px 9px;border-radius:6px">${a.ktr.toFixed(2)}</span></td><td><span class="badge" style="background:${row[4]};color:${row[5]}">${row[3]}</span></td></tr>`;
+  sl.forEach(a=>{
+    const row=getKTRRow(a.localPct);const bc=a.localPct>=60?'#4a7c5e':a.localPct>=40?'#8a6a1a':'#9b3a2a';
+    const hasSizes=a.sizesList&&a.sizesList.length>1;
+    const isOpen=S.expandedArts.has(a.art);
+    const tog=hasSizes?`<span class="expand-tog" onclick="toggleArtSizes('${a.art.replace(/'/g,"\\\\'")}')">${isOpen?'▼':'▶'}</span>`:'<span class="expand-tog"> </span>';
+    tb.innerHTML+=`<tr ${hasSizes?`style="cursor:pointer" onclick="toggleArtSizes('${a.art.replace(/'/g,"\\\\'")}')"`:''}><td>${tog}<div class="art-cell" style="display:inline-block;vertical-align:middle"><div class="art-text">${a.art}</div><div class="art-nmid">${a.nmId}</div></div></td><td>${fmtN(a.orders)}</td><td>${fmtN(a.local)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(a.localPct)}%;background:${bc}"></div></div><span class="bar-val">${a.localPct.toFixed(1)}%</span></div></td><td><span style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;background:${row[4]};color:${row[5]};padding:3px 9px;border-radius:6px">${a.ktr.toFixed(2)}</span></td><td><span class="badge" style="background:${row[4]};color:${row[5]}">${row[3]}</span></td></tr>`;
+    if(isOpen&&hasSizes){
+      a.sizesList.forEach(s=>{
+        const srow=getKTRRow(s.localPct);const sbc=s.localPct>=60?'#4a7c5e':s.localPct>=40?'#8a6a1a':'#9b3a2a';
+        tb.innerHTML+=`<tr class="size-row"><td class="row-label">Размер: ${s.size}</td><td>${fmtN(s.orders)}</td><td>${fmtN(s.local)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(s.localPct)}%;background:${sbc}"></div></div><span class="bar-val">${s.localPct.toFixed(1)}%</span></div></td><td><span style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:600;background:${srow[4]};color:${srow[5]};padding:2px 8px;border-radius:5px">${s.ktr.toFixed(2)}</span></td><td><span class="badge" style="background:${srow[4]};color:${srow[5]};font-size:10px">${srow[3]}</span></td></tr>`;
+      });
+    }
   });
   renderPag('pag-articles',total,page,p=>{S.artPage=p;renderArtTable();});
 }
+function toggleArtSizes(art){if(S.expandedArts.has(art))S.expandedArts.delete(art);else S.expandedArts.add(art);renderArtTable();}
 function filterArt(){S.artSearch=document.getElementById('search-article').value.trim();S.artSort=document.getElementById('sort-article').value;S.ktrFilter=document.getElementById('filter-ktr').value;S.artPage=1;renderArtTable();}
 
 function renderRegCharts(){
