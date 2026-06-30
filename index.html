@@ -109,9 +109,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .dfp-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .dfp-date{padding:7px 10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);outline:none}
 .dfp-date:focus{border-color:var(--accent)}
-.dfp-art-wrap{display:flex;flex-direction:column;gap:5px;flex:1;min-width:220px}
+.dfp-art-wrap{display:flex;flex-direction:column;gap:5px;flex:1;min-width:220px;position:relative}
 .dfp-art-input{padding:7px 10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);outline:none;width:100%}
 .dfp-art-input:focus{border-color:var(--accent)}
+.art-autocomplete{position:absolute;top:100%;left:0;right:0;margin-top:2px;background:var(--card);border:1px solid var(--border);border-radius:8px;max-height:260px;overflow-y:auto;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
+.art-autocomplete.show{display:block}
+.aac-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border)}
+.aac-item:last-child{border-bottom:none}
+.aac-item:hover{background:var(--card2)}
+.aac-art{font-weight:600;font-size:12px}
+.aac-meta{font-size:10px;color:var(--muted);margin-top:1px}
+.aac-empty{padding:10px 12px;font-size:12px;color:var(--muted)}
 .dfp-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
 .dfp-btn{padding:7px 14px;background:var(--accent);color:var(--card);border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
 .dfp-btn:hover{opacity:.88}
@@ -120,6 +128,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .size-row td{background:var(--card2);font-size:12px}
 .size-row td.row-label{padding-left:32px;color:var(--muted)}
 .expand-tog{cursor:pointer;display:inline-block;width:14px;color:var(--muted);font-size:10px}
+.copy-btn{cursor:pointer;color:var(--muted);font-size:14px;opacity:.4;transition:opacity .15s;padding:2px 4px;flex-shrink:0}
+.copy-btn:hover{opacity:1;color:var(--accent)}
+.copy-btn.copied{color:var(--green);opacity:1}
 </style>
 </head>
 <body>
@@ -186,9 +197,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <span class="dfp-label">Период по</span>
         <input class="dfp-date" type="date" id="dfp-date-to">
       </div>
-      <div class="dfp-art-wrap">
+      <div class="dfp-art-wrap" style="position:relative">
         <span class="dfp-label">Фильтр по артикулу</span>
-        <input class="dfp-art-input" type="text" id="dfp-art-input" placeholder="Введи supplierArticle и нажми Enter...">
+        <input class="dfp-art-input" type="text" id="dfp-art-input" placeholder="Введи supplierArticle и нажми Enter..." autocomplete="off">
+        <div class="art-autocomplete" id="art-autocomplete"></div>
         <div class="dfp-chips" id="dfp-art-chips"></div>
       </div>
       <button class="dfp-btn" onclick="applyDashFilters()">Применить</button>
@@ -241,7 +253,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <div class="tab-panel" id="tab-fo">
       <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Сводная по федеральным округам</div><div class="panel-sub">Локализация и КТР по каждому ФО</div></div></div><div class="chart-wrap" style="height:260px"><canvas id="chart-fo-bar"></canvas></div></div>
-      <div class="panel-card"><table class="data-table"><thead><tr><th>Федеральный округ</th><th>Заказов</th><th>Локальных</th><th>Доля локализации</th><th>КТР округа</th><th>Доля от всех</th></tr></thead><tbody id="tbody-fo"></tbody></table></div>
+      <div class="panel-card"><table class="data-table"><thead><tr><th>Федеральный округ</th><th>Заказов</th><th>Локальных</th><th>Доля локализации</th><th>КТР округа</th><th>Доля от всех</th></tr></thead><tbody id="tbody-fo"></tbody></table>
+        <div id="fo-footnote" style="display:none;padding:10px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)"></div>
+      </div>
       <div class="panel-card"><div class="panel-head"><div><div class="panel-title">Артикулы × ФО покупателя</div><div class="panel-sub">Куда уходят заказы каждого артикула — топ-30 артикулов</div></div></div><div style="overflow:auto;max-height:480px"><table class="data-table" id="table-art-fo"></table></div></div>
     </div>
 
@@ -288,7 +302,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="ref-block">
           <h3>Как считается локальный заказ</h3>
           <p>Заказ <strong>локальный</strong> если склад отправки и покупатель в одном ФО. ЮФО + СКФО считаются одним по правилам WB.</p>
-          <div class="formula-box">Локальный = normFO(ФО склада) == normFO(ФО покупателя)<br>Доля локализации = Локальных / Всего × 100%<br><br>ФО покупателя ← поле <strong>oblastOkrugName</strong> (WB API)<br>ФО склада ← поле <strong>warehouseName</strong> → справочник ниже</div>
+          <div class="formula-box">Локальный = normFO(ФО склада) == normFO(ФО покупателя)<br>Доля локализации = Локальных / Заказов РФ × 100%<br><br>ФО покупателя ← поле <strong>oblastOkrugName</strong> (WB API)<br>ФО склада ← поле <strong>warehouseName</strong> → справочник ниже</div>
+          <p><strong>Заказы СНГ исключены из расчёта</strong> (Армения, Беларусь, Казахстан, Киргизия и др.) — они не относятся ни к одному ФО РФ и не входят ни в числитель, ни в знаменатель доли локализации. Это сделано по аналогии с отчётом WB «География заказов», где доля локальности считается только от заказов внутри РФ.</p>
           <p>Источник данных: <code>statistics-api.wildberries.ru/api/v1/supplier/orders?dateFrom=...&flag=0</code></p>
           <p>flag=0 = фильтр по lastChangeDate, возвращает все актуальные заказы. Отменённые (isCancel:true) исключены. Лимит WB: 90 дней.</p>
         </div>
@@ -312,9 +327,74 @@ function getKTRRow(p){for(const r of KTR_TABLE)if(p>=r[0]&&p<=r[1])return r;retu
 
 const WH_FO={'Коледино':'ЦФО','Подольск':'ЦФО','Электросталь':'ЦФО','Домодедово':'ЦФО','Белые Столбы':'ЦФО','Пушкино':'ЦФО','Щербинка':'ЦФО','Тула':'ЦФО','Рязань':'ЦФО','Обухово':'ЦФО','Чехов':'ЦФО','Краснодар':'ЮФО','Невинномысск':'ЮФО','Ставрополь':'ЮФО','Ростов':'ЮФО','Екатеринбург':'УФО','Тюмень':'УФО','Челябинск':'УФО','Новосибирск':'СФО','Красноярск':'СФО','Барнаул':'СФО','Томск':'СФО','Хабаровск':'ДВФО','Владивосток':'ДВФО','Якутск':'ДВФО','Санкт-Петербург':'СЗФО','СПБ':'СЗФО','Шушары':'СЗФО','Парголово':'СЗФО','Казань':'ПФО','Самара':'ПФО','Нижний Новгород':'ПФО','Уфа':'ПФО','Пермь':'ПФО'};
 function getWhFO(wh){if(!wh)return null;for(const[k,v]of Object.entries(WH_FO))if(wh.toLowerCase().includes(k.toLowerCase()))return v;if(/москв|московск/i.test(wh))return'ЦФО';return null;}
-function normFO(s){if(!s)return null;const l=s.toLowerCase();if(l.includes('централь'))return'ЦФО';if(l.includes('северо-зап'))return'СЗФО';if(l.includes('южн')||l.includes('северо-кавк')||l.includes('скфо'))return'ЮФО';if(l.includes('приволж'))return'ПФО';if(l.includes('уральск'))return'УФО';if(l.includes('сибирск'))return'СФО';if(l.includes('дальневост'))return'ДВФО';if(l==='цфо')return'ЦФО';if(l==='сзфо')return'СЗФО';if(l==='юфо'||l==='скфо')return'ЮФО';if(l==='пфо')return'ПФО';if(l==='уфо')return'УФО';if(l==='сфо')return'СФО';if(l==='двфо')return'ДВФО';return s;}
+function normFO(s){
+  if(!s)return null;
+  const l=s.toLowerCase();
+  // СНГ и другие страны — не федеральные округа РФ, исключаем из расчёта КТР
+  if(/армени|беларус|белорус|казахстан|киргиз|кыргыз|узбекистан|таджик|туркмен|молдов|азербайджан|грузия/i.test(l))return'СНГ';
+  if(l.includes('централь'))return'ЦФО';
+  if(l.includes('северо-зап'))return'СЗФО';
+  if(l.includes('южн')||l.includes('северо-кавк')||l.includes('скфо'))return'ЮФО';
+  if(l.includes('приволж'))return'ПФО';
+  if(l.includes('уральск'))return'УФО';
+  if(l.includes('сибирск'))return'СФО';
+  if(l.includes('дальневост'))return'ДВФО';
+  if(l==='цфо')return'ЦФО';if(l==='сзфо')return'СЗФО';if(l==='юфо'||l==='скфо')return'ЮФО';
+  if(l==='пфо')return'ПФО';if(l==='уфо')return'УФО';if(l==='сфо')return'СФО';if(l==='двфо')return'ДВФО';
+  return s;
+}
 
-let S={token:'',proxy:'https://ktr.ooo6311ooo.workers.dev',dateFrom:'',dateTo:'',viewFrom:'',viewTo:'',artFilter:[],allOrders:[],orders:[],byArt:[],byReg:[],byFO:[],byWeek:[],artPage:1,regPage:1,rawPage:1,artSearch:'',regSearch:'',rawSearch:'',artSort:'orders-desc',ktrFilter:'all',ghToken:'',ghRepo:'',expandedArts:new Set()};
+let S={token:'',proxy:'https://ktr.ooo6311ooo.workers.dev',dateFrom:'',dateTo:'',viewFrom:'',viewTo:'',artFilter:[],allOrders:[],orders:[],byArt:[],byReg:[],byFO:[],byWeek:[],artPage:1,regPage:1,rawPage:1,artSearch:'',regSearch:'',rawSearch:'',artSort:'orders-desc',ktrFilter:'all',ghToken:'',ghRepo:'',expandedArts:new Set(),nomenclature:[]};
+
+// ══════════════════════════════════════
+// СПРАВОЧНИК НОМЕНКЛАТУРЫ (Google Sheets CSV)
+// ══════════════════════════════════════
+const NOMENCLATURE_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vRv2VuvAbmweu5Q_5cj-zoss2s3RoFMwKfK2z6tp22oG7FFfNGvoR8LYAyv56tvnvdJc6wouLBaYpph/pub?gid=612792464&single=true&output=csv';
+
+function parseCSVLine(line){
+  // Простой CSV-парсер с поддержкой кавычек
+  const result=[];let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else{inQ=!inQ;}}
+    else if(ch===','&&!inQ){result.push(cur);cur='';}
+    else cur+=ch;
+  }
+  result.push(cur);
+  return result;
+}
+
+async function loadNomenclature(){
+  try{
+    const res=await fetch(NOMENCLATURE_CSV_URL);
+    if(!res.ok)return;
+    const text=await res.text();
+    const lines=text.split('\n').filter(l=>l.trim());
+    if(lines.length<2)return;
+    const header=parseCSVLine(lines[0]).map(h=>h.trim());
+    // Ищем нужные колонки по названию (гибко, на случай изменений)
+    const idxArt=header.findIndex(h=>/артикул\s*поставщика/i.test(h));
+    const idxNm=header.findIndex(h=>/артикул\s*wb/i.test(h));
+    const idxSubject=header.findIndex(h=>/предмет/i.test(h));
+    const idxBrand=header.findIndex(h=>/бренд/i.test(h));
+    if(idxArt<0)return; // колонка не найдена — пропускаем тихо
+    const seen=new Set();
+    const rows=[];
+    for(let i=1;i<lines.length;i++){
+      const cells=parseCSVLine(lines[i]);
+      const art=(cells[idxArt]||'').trim();
+      if(!art||seen.has(art))continue;
+      seen.add(art);
+      rows.push({
+        art,
+        nmId:idxNm>=0?(cells[idxNm]||'').trim():'',
+        subject:idxSubject>=0?(cells[idxSubject]||'').trim():'',
+        brand:idxBrand>=0?(cells[idxBrand]||'').trim():'',
+      });
+    }
+    S.nomenclature=rows;
+  }catch(e){console.warn('Не удалось загрузить справочник номенклатуры:',e);}
+}
 const PAGE=20,CHARTS={};
 
 (function init(){
@@ -322,11 +402,20 @@ const PAGE=20,CHARTS={};
   document.getElementById('date-to').value=fmtD(to);document.getElementById('date-from').value=fmtD(from);
   try{const c=JSON.parse(localStorage.getItem('ef_ktr_v4')||'{}');if(c.token)document.getElementById('api-token').value=c.token;if(c.proxy)document.getElementById('proxy-url').value=c.proxy;if(c.ghToken)document.getElementById('gh-token').value=c.ghToken;if(c.ghRepo)document.getElementById('gh-repo').value=c.ghRepo;if(c.artFilter&&c.artFilter.length){S.artFilter=c.artFilter;renderArtChips();}}catch(e){}
   renderKTRRef();renderWhRef();renderHistoryList();
+  loadNomenclature();
   document.addEventListener('keydown',e=>{
-    if(e.target&&e.target.id==='dfp-art-input'&&e.key==='Enter'){
-      const v=e.target.value.trim();
-      if(v&&!S.artFilter.includes(v)){S.artFilter.push(v);renderArtChips();savePrefs();e.target.value='';if(S.allOrders.length)applyArtFilterLive();}
+    if(e.target&&e.target.id==='dfp-art-input'){
+      if(e.key==='Enter'){
+        const v=e.target.value.trim();
+        if(v&&!S.artFilter.includes(v)){S.artFilter.push(v);renderArtChips();savePrefs();e.target.value='';hideAutocomplete();if(S.allOrders.length)applyArtFilterLive();}
+      }else if(e.key==='Escape'){hideAutocomplete();}
     }
+  });
+  document.addEventListener('input',e=>{
+    if(e.target&&e.target.id==='dfp-art-input')showAutocomplete(e.target.value);
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.dfp-art-wrap'))hideAutocomplete();
   });
 })();
 
@@ -337,6 +426,34 @@ function renderArtChips(){
   if(el)el.innerHTML=S.artFilter.map((a,i)=>`<span class="art-chip">${a}<span class="cx" onclick="removeArtFilter(${i})">×</span></span>`).join('');
 }
 function removeArtFilter(i){S.artFilter.splice(i,1);renderArtChips();savePrefs();if(S.allOrders.length)applyDashFilters();}
+
+// ── Автокомплит артикула по справочнику номенклатуры ──
+function showAutocomplete(query){
+  const el=document.getElementById('art-autocomplete');
+  if(!el)return;
+  const q=query.trim().toLowerCase();
+  if(!q||!S.nomenclature.length){el.classList.remove('show');el.innerHTML='';return;}
+  const matches=S.nomenclature.filter(n=>n.art.toLowerCase().includes(q)).slice(0,15);
+  if(!matches.length){
+    el.innerHTML='<div class="aac-empty">Совпадений в справочнике не найдено</div>';
+    el.classList.add('show');return;
+  }
+  el.innerHTML=matches.map(n=>{
+    const metaParts=[];
+    if(n.nmId)metaParts.push('nmId '+n.nmId);
+    if(n.subject)metaParts.push(n.subject);
+    if(n.brand)metaParts.push(n.brand);
+    return`<div class="aac-item" onclick="pickAutocomplete('${n.art.replace(/'/g,"\\\\'")}')"><div class="aac-art">${n.art}</div><div class="aac-meta">${metaParts.join(' · ')}</div></div>`;
+  }).join('');
+  el.classList.add('show');
+}
+function hideAutocomplete(){const el=document.getElementById('art-autocomplete');if(el){el.classList.remove('show');el.innerHTML='';}}
+function pickAutocomplete(art){
+  if(!S.artFilter.includes(art))S.artFilter.push(art);
+  document.getElementById('dfp-art-input').value='';
+  hideAutocomplete();renderArtChips();savePrefs();
+  if(S.allOrders.length)applyArtFilterLive();
+}
 
 const HIST_KEY='ef_ktr_history';
 function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return[];}}
@@ -440,7 +557,10 @@ function processOrders(){
   const artMap={},regMap={},foMap={},wkMap={};
   for(const o of S.orders){
     const art=o.supplierArticle||'—',nmId=o.nmId||0,wh=o.warehouseName||'';
-    const buyerFO=normFO(o.oblastOkrugName||''),whFO=getWhFO(wh);
+    const buyerFOraw=normFO(o.oblastOkrugName||'');
+    const isCIS=buyerFOraw==='СНГ';
+    const buyerFO=isCIS?null:buyerFOraw; // СНГ не считается ни локальным, ни нелокальным заказом РФ
+    const whFO=getWhFO(wh);
     const isLocal=!!(buyerFO&&whFO&&normFO(whFO)===normFO(buyerFO));
     const dateStr=(o.date||'').slice(0,10),wk=getWk(dateStr);
     const region=o.regionName||o.oblastOkrugName||'Неизвестно';
@@ -449,12 +569,12 @@ function processOrders(){
     artMap[art].orders++;if(isLocal)artMap[art].local++;
     if(!artMap[art].weeks[wk])artMap[art].weeks[wk]={orders:0,local:0};
     artMap[art].weeks[wk].orders++;if(isLocal)artMap[art].weeks[wk].local++;
-    const bFO=buyerFO||'—';artMap[art].foMap[bFO]=(artMap[art].foMap[bFO]||0)+1;
+    const bFO=isCIS?'СНГ':(buyerFO||'Неизвестно');artMap[art].foMap[bFO]=(artMap[art].foMap[bFO]||0)+1;
     if(!artMap[art].sizes[size])artMap[art].sizes[size]={size,orders:0,local:0};
     artMap[art].sizes[size].orders++;if(isLocal)artMap[art].sizes[size].local++;
-    if(!regMap[region])regMap[region]={region,fo:buyerFO||'—',orders:0,local:0};
+    if(!regMap[region])regMap[region]={region,fo:isCIS?'СНГ':(buyerFO||'—'),orders:0,local:0};
     regMap[region].orders++;if(isLocal)regMap[region].local++;
-    const foKey=buyerFO||'Неизвестно';if(!foMap[foKey])foMap[foKey]={fo:foKey,orders:0,local:0};
+    const foKey=isCIS?'СНГ':(buyerFO||'Неизвестно');if(!foMap[foKey])foMap[foKey]={fo:foKey,orders:0,local:0};
     foMap[foKey].orders++;if(isLocal)foMap[foKey].local++;
     if(!wkMap[wk])wkMap[wk]={week:wk,orders:0,local:0};
     wkMap[wk].orders++;if(isLocal)wkMap[wk].local++;
@@ -496,12 +616,17 @@ function clearDashFilter(){S.artFilter=[];renderArtChips();savePrefs();applyArtF
 
 function renderKPIs(){
   let sumKTR=0,sumO=0;for(const a of S.byArt){sumKTR+=a.ktr*a.orders;sumO+=a.orders;}
-  const il=sumO>0?sumKTR/sumO:1,localTotal=S.byArt.reduce((s,a)=>s+a.local,0),localPct=S.orders.length>0?localTotal/S.orders.length*100:0;
+  const il=sumO>0?sumKTR/sumO:1;
+  // Доля локализации считается от заказов РФ (без СНГ), как у WB на seller.wildberries.ru
+  const cisCount=S.orders.filter(o=>normFO(o.oblastOkrugName||'')==='СНГ').length;
+  const rfOrdersCount=S.orders.length-cisCount;
+  const localTotal=S.byArt.reduce((s,a)=>s+a.local,0);
+  const localPct=rfOrdersCount>0?localTotal/rfOrdersCount*100:0;
   const ilEl=document.getElementById('kpi-il');ilEl.textContent=il.toFixed(2);ilEl.style.color=il<1?'var(--green)':il>1?'var(--red)':'var(--text)';
   document.getElementById('kpi-local-pct').textContent=localPct.toFixed(1)+'%';
   document.getElementById('kpi-articles').textContent=fmtN(S.byArt.length);
   document.getElementById('kpi-orders').textContent=fmtN(S.orders.length);
-  document.getElementById('kpi-fo').textContent=fmtN(new Set(S.byFO.map(f=>f.fo).filter(Boolean)).size);
+  document.getElementById('kpi-fo').textContent=fmtN(new Set(S.byFO.map(f=>f.fo).filter(fo=>fo&&fo!=='Неизвестно'&&fo!=='СНГ')).size);
   const vf=S.viewFrom||S.dateFrom,vt=S.viewTo||S.dateTo;
   const f=vf.split('-').reverse().join('.'),t=vt.split('-').reverse().join('.');
   const isNarrowed=(vf!==S.dateFrom||vt!==S.dateTo);
@@ -531,7 +656,7 @@ function renderArtTable(){
     const hasSizes=a.sizesList&&a.sizesList.length>1;
     const isOpen=S.expandedArts.has(a.art);
     const tog=hasSizes?`<span class="expand-tog" onclick="toggleArtSizes('${a.art.replace(/'/g,"\\\\'")}')">${isOpen?'▼':'▶'}</span>`:'<span class="expand-tog"> </span>';
-    tb.innerHTML+=`<tr ${hasSizes?`style="cursor:pointer" onclick="toggleArtSizes('${a.art.replace(/'/g,"\\\\'")}')"`:''}><td>${tog}<div class="art-cell" style="display:inline-block;vertical-align:middle"><div class="art-text">${a.art}</div><div class="art-nmid">${a.nmId}</div></div></td><td>${fmtN(a.orders)}</td><td>${fmtN(a.local)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(a.localPct)}%;background:${bc}"></div></div><span class="bar-val">${a.localPct.toFixed(1)}%</span></div></td><td><span style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;background:${row[4]};color:${row[5]};padding:3px 9px;border-radius:6px">${a.ktr.toFixed(2)}</span></td><td><span class="badge" style="background:${row[4]};color:${row[5]}">${row[3]}</span></td></tr>`;
+    tb.innerHTML+=`<tr><td>${tog}<div class="art-cell" style="display:inline-flex;align-items:center;gap:6px;vertical-align:middle"><div><div class="art-text" style="user-select:text;cursor:text">${a.art}</div><div class="art-nmid">${a.nmId}</div></div><span class="copy-btn" title="Скопировать артикул" onclick="copyArt(event,'${a.art.replace(/'/g,"\\\\'")}')">⧉</span></div></td><td>${fmtN(a.orders)}</td><td>${fmtN(a.local)}</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round(a.localPct)}%;background:${bc}"></div></div><span class="bar-val">${a.localPct.toFixed(1)}%</span></div></td><td><span style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:600;background:${row[4]};color:${row[5]};padding:3px 9px;border-radius:6px">${a.ktr.toFixed(2)}</span></td><td><span class="badge" style="background:${row[4]};color:${row[5]}">${row[3]}</span></td></tr>`;
     if(isOpen&&hasSizes){
       a.sizesList.forEach(s=>{
         const srow=getKTRRow(s.localPct);const sbc=s.localPct>=60?'#4a7c5e':s.localPct>=40?'#8a6a1a':'#9b3a2a';
@@ -542,6 +667,20 @@ function renderArtTable(){
   renderPag('pag-articles',total,page,p=>{S.artPage=p;renderArtTable();});
 }
 function toggleArtSizes(art){if(S.expandedArts.has(art))S.expandedArts.delete(art);else S.expandedArts.add(art);renderArtTable();}
+function copyArt(ev,art){
+  ev.stopPropagation();
+  const el=ev.currentTarget;
+  navigator.clipboard.writeText(art).then(()=>{
+    el.classList.add('copied');el.textContent='✓';
+    setTimeout(()=>{el.classList.remove('copied');el.textContent='⧉';},1200);
+  }).catch(()=>{
+    // Фоллбек для старых браузеров
+    const ta=document.createElement('textarea');ta.value=art;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta);
+    el.classList.add('copied');el.textContent='✓';setTimeout(()=>{el.classList.remove('copied');el.textContent='⧉';},1200);
+  });
+}
 function filterArt(){S.artSearch=document.getElementById('search-article').value.trim();S.artSort=document.getElementById('sort-article').value;S.ktrFilter=document.getElementById('filter-ktr').value;S.artPage=1;renderArtTable();}
 
 function renderRegCharts(){
@@ -562,14 +701,27 @@ function renderRegTable(){
 function filterReg(){S.regSearch=document.getElementById('search-region').value.trim();S.regPage=1;renderRegTable();}
 
 function renderFOTab(){
-  const foList=S.byFO.filter(f=>f.fo&&f.fo!=='Неизвестно');
+  // Только реальные ФО РФ — без СНГ и Неизвестно
+  const foList=S.byFO.filter(f=>f.fo&&f.fo!=='Неизвестно'&&f.fo!=='СНГ');
+  const cisEntry=S.byFO.find(f=>f.fo==='СНГ');
+  const unknownEntry=S.byFO.find(f=>f.fo==='Неизвестно');
   dc('fo-bar');CHARTS['fo-bar']=new Chart(document.getElementById('chart-fo-bar'),{type:'bar',data:{labels:foList.map(f=>f.fo),datasets:[{label:'Локальные',data:foList.map(f=>f.local),backgroundColor:'#4a7c5e',borderRadius:4},{label:'Нелокальные',data:foList.map(f=>f.orders-f.local),backgroundColor:'#ddd8ce',borderRadius:4}]},options:{...CD,plugins:{...CD.plugins,legend:{display:true,position:'top',labels:{font:{family:'Inter',size:11},color:'#8a8578',boxWidth:12}}},scales:{x:{...CD.scales.x,stacked:true},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,callback:v=>fmtN(v)}}}}});
-  const totAll=S.byFO.reduce((s,f)=>s+f.orders,0);
+  // Доля считается от заказов РФ (без СНГ), как у WB
+  const totRF=foList.reduce((s,f)=>s+f.orders,0);
   const tb=document.getElementById('tbody-fo');tb.innerHTML='';
-  S.byFO.forEach(f=>{const row=getKTRRow(f.localPct);const share=totAll>0?(f.orders/totAll*100).toFixed(1):0;
+  foList.forEach(f=>{const row=getKTRRow(f.localPct);const share=totRF>0?(f.orders/totRF*100).toFixed(1):0;
     tb.innerHTML+=`<tr><td><strong>${f.fo}</strong></td><td>${fmtN(f.orders)}</td><td>${fmtN(f.local)}</td><td>${f.localPct.toFixed(1)}%</td><td><span class="fo-ktr-cell" style="background:${row[4]};color:${row[5]}">${f.ktr.toFixed(2)}</span></td><td>${share}%</td></tr>`;
   });
-  const allFOs=[...new Set(S.orders.map(o=>normFO(o.oblastOkrugName||'')).filter(Boolean))].sort();
+  // Сноска с исключённым СНГ/Неизвестно
+  const footEl=document.getElementById('fo-footnote');
+  if(footEl){
+    const parts=[];
+    if(cisEntry)parts.push(`СНГ (Армения/Беларусь/Казахстан и т.д.): ${fmtN(cisEntry.orders)} заказов — исключены из расчёта, не относятся к ФО РФ`);
+    if(unknownEntry)parts.push(`Не удалось определить регион: ${fmtN(unknownEntry.orders)} заказов`);
+    footEl.textContent=parts.length?parts.join(' · '):'';
+    footEl.style.display=parts.length?'block':'none';
+  }
+  const allFOs=[...new Set(S.orders.map(o=>normFO(o.oblastOkrugName||'')).filter(fo=>fo&&fo!=='СНГ'))].sort();
   const tbl=document.getElementById('table-art-fo');const arts=S.byArt.slice(0,30);
   let html=`<thead><tr><th>Артикул</th>${allFOs.map(fo=>`<th style="text-align:center">${fo}</th>`).join('')}<th style="text-align:center">Итого</th></tr></thead><tbody>`;
   for(const a of arts){
